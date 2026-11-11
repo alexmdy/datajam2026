@@ -19,7 +19,7 @@ pres.layout = "LAYOUT_16x9";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 pres.title = "DDD Vancouver STR recommendation - DataJam 2026";
 const C = pres.SchemeColor;
-const CREDIT = "Data: Inside Airbnb, Vancouver, 15 June 2026, CC BY 4.0. Other sources: City of Vancouver Open Data, CMHC, GVR (see appendix).";
+const CREDIT = "Data: Inside Airbnb, Vancouver, 15 June 2026, CC BY 4.0. Other sources: City of Vancouver Open Data, CMHC, Statistics Canada, GVR (see appendix).";
 
 pres.defineSlideMaster({ title: "DARK", background: { color: C.text2 },
   objects: [{ text: { text: CREDIT, options: { x: 0.5, y: 5.22, w: 8.6, h: 0.3, fontSize: 9, color: C.background2, isTextBox: true } } }],
@@ -68,7 +68,7 @@ const cards1 = [["12", "1-2 bedroom condos, Downtown, about 60% one-bedroom"],
   [pct(K.B_p50), `2027 net yield on capital deployed (P10-P90: ${pct(K.B_p10)}-${pct(K.B_p90)})`]];
 cards1.forEach(([b, t], i) => card(s, 0.6 + i * 2.25, 2.15, 2.05, 1.55, b, t, { fill: "1B3F66", bigColor: C.background1, smallColor: C.background2, bigSize: 30 }));
 s.addText([{ text: "How: ", options: { bold: true } },
-  { text: "nightly guests May-Oct; furnished stays of 30+ nights Jan-Apr and Nov-Dec. That keeps every unit out of the City's 3% Empty Homes Tax and the 1% provincial Speculation and Vacancy Tax." }],
+  { text: "nightly guests May-Oct; furnished stays of 30+ nights Jan-Apr and Nov-Dec. That is designed to keep every unit out of the City's 3% Empty Homes Tax and the 1% provincial Speculation and Vacancy Tax; a legal opinion confirming it is our first step." }],
   { x: 0.6, y: 3.95, w: 8.8, h: 0.75, fontSize: 14, color: C.background1, margin: 0, valign: "top", isTextBox: true });
 NOTES.push(`Our recommendation: DDD should buy twelve one- and two-bedroom condos in Downtown Vancouver, about ${m$(K.B_capital)} all-in, and keep roughly ${m$(10e6 - K.B_capital)} in reserve. We expect about ${r10k(K.B_noi_p50)} of net operating income in 2027, a ${pct(K.B_p50)} yield on the capital deployed, with a P10 to P90 range of ${pct(K.B_p10)} to ${pct(K.B_p90)}. The key is how they are run: nightly guests from May to October, and furnished stays of 30 nights or more for the other six months. That operating model is what turns this from a money-losing plan into a positive one, and the next slides show why.`);
 
@@ -89,7 +89,8 @@ para(s, [head("Return metric"),
   head("Data we joined to the Inside Airbnb snapshot")], { x: 5.4, y: 1.15, w: 4.1, h: 2.1 });
 s.addText(bullets(["City of Vancouver 2026 assessments, joined to parcels and the 22 local areas: purchase prices",
   "GVR MLS HPI, June 2026: rolls July 2025 assessments forward; independent price check",
-  "CMHC Rental Market Survey 2023-25: vacancy test and long-term rents",
+  "CMHC Rental Market Survey 2023-25: vacancy test",
+  "Statistics Canada asking rents, Q1 2026: long-term rental benchmark",
   "Inside Airbnb March 2026 snapshot: same-listing seasonal prices"], 11.5), { x: 5.4, y: 3.05, w: 4.1, h: 1.95, margin: 0, valign: "top", color: C.text1, isTextBox: true });
 NOTES.push(`DDD has ten million dollars of equity, properties live on January 1, 2027, and it will be judged on 2027. So our return metric is the 2027 net operating yield on all-in capital: income after every operating cost and tax, divided by price plus transfer tax, closing and furnishing. We leave out appreciation because Vancouver prices are falling. From 6,509 listings we kept 1,809 comparables a compliant, professionally run unit would compete with: entire homes, true nightly rentals, active, operating a full year, licensed, with a usable price. Purchase prices come from the City's 2026 assessment roll, joined to parcels and local areas, and rolled forward with the GVR price index.`);
 
@@ -99,19 +100,20 @@ title(s, "Nightly rental all year loses money once vacancy taxes apply; a season
 badge(s, "D1");
 const om = D.opmodel;
 s.addChart(pres.charts.BAR, [
-  { name: "1-2BR condo", labels: ["Nightly all year", "Seasonal hybrid", "Long-term rental"], values: om.condo.map((v) => +(v * 100).toFixed(1)) }],
-  Object.assign({}, AX, { x: 0.5, y: 1.15, w: 4.55, h: 3.2, barDir: "col", chartColors: [HEX.blue], showValue: true, dataLabelPosition: "outEnd",
+  { name: "1-2BR condo", labels: ["Nightly all year", "Seasonal hybrid", "Long-term rental"], values: om.condo.map((v) => +(v * 100).toFixed(1)) },
+  { name: "3BR+ detached house", labels: ["Nightly all year", "Seasonal hybrid", "Long-term rental"], values: om.house.map((v) => +(v * 100).toFixed(1)) }],
+  Object.assign({}, AX, { x: 0.5, y: 1.15, w: 4.55, h: 3.2, barDir: "col", chartColors: [HEX.blue, HEX.grey], showValue: true, dataLabelPosition: "outEnd",
     dataLabelFormatCode: '0.0"%";-0.0"%";;', dataLabelColor: "0B1B2B", valAxisLabelFormatCode: '0"%"', valAxisMinVal: -4, valAxisMaxVal: 5, valAxisMajorUnit: 1,
-    showLegend: false, showTitle: true, title: "Median 2027 net yield by operating model, 1-2BR condo", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 60 }));
+    showLegend: true, legendPos: "b", showTitle: true, title: "Median 2027 net yield by operating model", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 60 }));
 const MC = D.month_compare;
 s.addChart(pres.charts.BAR, [
   { name: "Nightly, after fees", labels: "JFMAMJJASOND".split(""), values: MC.nightly.map((v) => Math.round(v)) },
   { name: "Furnished 30+ nights, after fees", labels: "JFMAMJJASOND".split(""), values: MC.furnished.map((v) => Math.round(v)) }],
   Object.assign({}, AX, { x: 5.25, y: 1.15, w: 4.25, h: 3.2, barDir: "col", chartColors: [HEX.blue, HEX.grey], valAxisLabelFormatCode: '$#,##0',
     showLegend: true, legendPos: "b", showTitle: true, title: "Median Downtown condo: net income per month", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 40, barOverlapPct: 0 }));
-para(s, [{ text: `An investor-owned nightly rental counts as vacant: 3% Empty Homes Tax + 1% SVT, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Long-term rental of the same Downtown unit: ${pct(K.ltr_benchmark_yield)}.` }], { x: 0.5, y: 4.45, w: 4.55, h: 0.7, fontSize: 11.5 });
+para(s, [{ text: `An investor-owned nightly rental counts as vacant: 3% Empty Homes Tax + 1% SVT, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Long-term rents: StatCan asking rents, Q1 2026.` }], { x: 0.5, y: 4.45, w: 4.55, h: 0.7, fontSize: 11.5 });
 para(s, [{ text: `After fees, a furnished stay beats nightly Nov-Apr; nightly wins May-Sep. October is close ($${(MC.nightly[9] / 1000).toFixed(1)}k vs $${(MC.furnished[9] / 1000).toFixed(1)}k, on an asking rent), so it stays nightly. Furnished rent shown flat: no monthly data.` }], { x: 5.25, y: 4.45, w: 4.25, h: 0.7, fontSize: 11.5 });
-NOTES.push(`Decision one, the operating model. The simulation lets DDD skip the principal-residence rule, but not the taxes. A unit that is not lived in or rented for six months in stays of 30 days or more is "vacant" for the City's 3% Empty Homes Tax and the province's 1% Speculation and Vacancy Tax, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Run nightly all year, the median condo yields ${pct(K.condo_yield_str)}. The fix comes from seasonality: November to April is only ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue. Rent those months as furnished 30-plus-night stays and the unit is exempt. Month by month, after fees, the median Downtown condo earns more from a furnished stay than from nightly guests in every month from November to April, and less from May to September. October is nearly a tie, and since furnished rents are asking prices that our simulation discounts by up to 30 percent, we keep October nightly. The hybrid yields ${pct(K.condo_yield_hybrid)} on condos, more than double a plain long-term rental at ${pct(K.ltr_benchmark_yield)}.`);
+NOTES.push(`Decision one, the operating model. The simulation lets DDD skip the principal-residence rule, but not the taxes. A unit that is not lived in or rented for six months in stays of 30 days or more is "vacant" for the City's 3% Empty Homes Tax and the province's 1% Speculation and Vacancy Tax, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Run nightly all year, the median condo yields ${pct(K.condo_yield_str)}. The fix comes from seasonality: November to April is only ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue. Rent those months as furnished 30-plus-night stays and the unit is exempt. Month by month, after fees, the median Downtown condo earns more from a furnished stay than from nightly guests in every month from November to April, and less from May to September. October is nearly a tie, and since furnished rents are asking prices that our simulation discounts by up to 30 percent, we keep October nightly. The hybrid yields ${pct(K.condo_yield_hybrid)} on condos, against ${pct(K.ltr_benchmark_yield)} for a plain long-term rental. Houses are a different story: the hybrid earns only ${pct(K.house_yield_hybrid)} and a long-term lease ${pct(K.ltr_benchmark_yield_house)}, because land adds cost but not nightly revenue. Both long-term figures use Statistics Canada's average asking rents for the Vancouver area, first quarter 2026, the latest published before the case date.`);
 
 // ---------- 4. D2 revenue base ----------
 s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Pitch" });
@@ -125,7 +127,7 @@ s.addChart(pres.charts.BAR, [
     valAxisHidden: true, valGridLine: { style: "none" }, showValue: true, dataLabelPosition: "inEnd", dataLabelColor: "FFFFFF", dataLabelFontSize: 12,
     dataLabelFormatCode: '$#,##0.0,"k";;;', showLegend: false, barGapWidthPct: 45, catAxisLabelFontSize: 10.5,
     showTitle: true, title: "Median 1-2BR condo comparable, annual gross revenue", titleFontSize: 11, titleColor: "0E2A47" }));
-const steps4 = [[`${K.pct_prices_from_90night_quotes.toFixed(0)}% of prices are 90-night quotes`, "giving nightly 'prices' as low as $6. We keep only quotes of 7 nights or fewer."],
+const steps4 = [[`${K.pct_prices_from_90night_quotes.toFixed(0)}% of prices are long-stay quotes (28+ nights, mostly 90)`, "giving nightly 'prices' as low as $6. We keep only quotes of 7 nights or fewer."],
   ["June quotes fall in the FIFA World Cup window", `Match-night stays cost ${pct(K.match_night_premium)} more than the same listings' other nights (95% CI ${K.match_premium_ci.split("-").map((x) => pct(+x)).join("-")}). Removed.`],
   ["June is peak season", `The same listing costs ${pct(K.mar_over_jun_price, 0)} of its June price in late March. Seasonal average rate = ${K.annual_adr_factor.toFixed(2)} x June.`]];
 steps4.forEach(([h, t], i) => {
@@ -135,7 +137,7 @@ steps4.forEach(([h, t], i) => {
   para(s, [{ text: h, options: { bold: true, breakLine: true, color: C.text2 } }, { text: t }], { x: 6.2, y: y - 0.02, w: 3.3, h: 1.0, fontSize: 11.5 });
 });
 caption(s, `Result: ${k$(K.rev_bridge_ia)} to ${k$(K.rev_bridge_str)} for nightly-only (-12%); ${k$(K.rev_bridge_hybrid)} as a hybrid with furnished winter stays.`, 0.5, 4.6, 9.0);
-NOTES.push(`Decision two: we did not trust Inside Airbnb's revenue estimate, which multiplies one price quote by estimated nights. Three problems. ${K.pct_prices_from_90night_quotes.toFixed(0)} percent of prices are quotes for 90-night stays, which give nightly prices as low as six dollars, so we dropped those. The June scrape priced stays during the World Cup: by comparing each listing's price on a match night with its March price, match nights carried a ${pct(K.match_night_premium)} premium, which won't recur in 2027. And June is peak season: the same listing charges ${pct(K.mar_over_jun_price, 0)} of that in late March. Correcting for all three cuts the median condo's revenue from ${k$(K.rev_bridge_ia)} to ${k$(K.rev_bridge_str)}, about 12 percent, and every yield we show uses the corrected figure.`);
+NOTES.push(`Decision two: we did not trust Inside Airbnb's revenue estimate, which multiplies one price quote by estimated nights. Three problems. ${K.pct_prices_from_90night_quotes.toFixed(0)} percent of prices are quotes for stays of 28 nights or more, mostly 90, which give nightly prices as low as six dollars, so we dropped those. The June scrape priced stays during the World Cup: by comparing each listing's price on a match night with its March price, match nights carried a ${pct(K.match_night_premium)} premium, which won't recur in 2027. And June is peak season: the same listing charges ${pct(K.mar_over_jun_price, 0)} of that in late March. Correcting for all three cuts the median condo's revenue from ${k$(K.rev_bridge_ia)} to ${k$(K.rev_bridge_str)}, about 12 percent, and every yield we show uses the corrected figure.`);
 
 // ---------- 5. Where ----------
 s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Pitch" });
@@ -246,17 +248,17 @@ function dlog(rows, ttl) {
   return x;
 }
 dlog([["D1", "Operating model: nightly May-Oct, furnished 30+ night stays Jan-Apr and Nov-Dec, instead of nightly all year.",
-  `An investor-owned nightly STR is 'vacant' under Vancouver's Vacancy Tax By-law (3%) and BC SVT (1%, Canadian owners): about ${k$(K.condo_vacancy_taxes_median)} a year per median condo. Compared 3 models on the same 706 condo comparables: nightly all year ${pct(K.condo_yield_str)}, hybrid ${pct(K.condo_yield_hybrid)}, long-term rental ${pct(K.ltr_benchmark_yield)} (Downtown, CMHC rent). Nov-Apr is ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue (reviews 2024-25 x same-listing price index).`,
+  `An investor-owned nightly STR is 'vacant' under Vancouver's Vacancy Tax By-law (3%) and BC SVT (1%, Canadian owners): about ${k$(K.condo_vacancy_taxes_median)} a year per median condo. Compared 3 models on the same 706 condo comparables: nightly all year ${pct(K.condo_yield_str)}, hybrid ${pct(K.condo_yield_hybrid)}, long-term rental ${pct(K.ltr_benchmark_yield)} (StatCan Q1 2026 asking rent). Houses: ${pct(K.house_yield_str)} / ${pct(K.house_yield_hybrid)} / ${pct(K.ltr_benchmark_yield_house)}. Nov-Apr is ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue (reviews 2024-25 x same-listing price index).`,
   "Turned a loss-making plan into a positive one; set the operating calendar; made passing the 6-month test the top risk and the first next step (legal opinion)."],
  ["D2", "Revenue base: rebuild 2027 revenue from cleaned prices instead of Inside Airbnb's estimated revenue.",
-  `${K.pct_prices_from_90night_quotes}% of prices are 90-night quotes (nightly values down to $6). June quotes fall in the World Cup window: match-night stays +${pct(K.match_night_premium)} vs the same listings' other nights (95% CI ${K.match_premium_ci.split("-").map((x) => pct(+x)).join("-")}, March price as control). Late-March price = ${pct(K.mar_over_jun_price, 0)} of June, so seasonal average = ${K.annual_adr_factor.toFixed(2)} x June (demand-weighted). Dec 2025 snapshot has no prices, so it could not be used.`,
-  `Median condo revenue ${k$(K.rev_bridge_ia)} to ${k$(K.rev_bridge_str)} (-12%); all yields about 1 pt lower than the naive method. Prevents presenting a one-off event year as the 2027 base.`]],
+  `${K.pct_prices_from_90night_quotes}% of prices are quotes for 28+ night stays, mostly 90 nights (nightly values down to $6). June quotes fall in the World Cup window: match-night stays +${pct(K.match_night_premium)} vs the same listings' other nights (95% CI ${K.match_premium_ci.split("-").map((x) => pct(+x)).join("-")}, March price as control). Late-March price = ${pct(K.mar_over_jun_price, 0)} of June, so seasonal average = ${K.annual_adr_factor.toFixed(2)} x June (demand-weighted). Dec 2025 snapshot has no prices, so it could not be used.`,
+  `Median condo revenue ${k$(K.rev_bridge_ia)} to ${k$(K.rev_bridge_str)} (-12%); condo hybrid yield ${pct(K.condo_yield_hybrid)} vs ${pct(K.condo_yield_hybrid_naive_revenue)} with the naive revenue (about 0.5 pt lower). Prevents presenting a one-off event year as the 2027 base.`]],
  "Decision log (1/2)");
 dlog([["D3", "How many: 12 modest Downtown condos, not 5 detached houses; diversify across buildings, not neighbourhoods.",
   `Monte Carlo, 10,000 runs, 4 portfolios. Houses: P50 ${pct(K.A_p50)}, P(yield <2%) ${pct(K.A_prob_below_2, 0)}. 12 Downtown condos: P50 ${pct(K.B_p50)}, P10 ${pct(K.B_p10)}. 3-area condo mix: P50 ${pct(K.C_p50)}, P10-P90 width ${(K.C_spread * 100).toFixed(1)} vs ${(K.B_spread * 100).toFixed(1)} pts: tested and did not reduce risk (shocks are market-wide).`,
   "Dropped houses and the multi-area plan; added a building-level rule (6+ buildings) aimed at the risk that does vary by unit: strata bylaws."],
  ["D4", "Scope: stay in the City of Vancouver (fund preference) rather than suburbs or Kelowna.",
-  `The snapshot covers the City only. City rental vacancy (CMHC, zones 1-10, unit-weighted): ${K.city_vacancy_2024.toFixed(1)}% in 2024, ${K.city_vacancy_2025.toFixed(1)}% in 2025, under the 3%-for-two-years test, so no opt-out can take effect before June 2028. CMHC zones covering Burnaby, New Westminster, Surrey and Richmond were already at or above 3% in 2025; if 2026 also clears 3%, they could opt out from June 1, 2027, letting competing listings back mid-year.`,
+  `The snapshot covers the City only. City of Vancouver rental vacancy (CMHC's published city rate): ${K.city_vacancy_2024.toFixed(1)}% in 2024, ${K.city_vacancy_2025.toFixed(1)}% in 2025, under the 3%-for-two-years test, so no opt-out can take effect before June 2028. Burnaby (${K.burnaby_vacancy_2025.toFixed(1)}%), New Westminster (${K.new_westminster_vacancy_2025.toFixed(1)}%, low-reliability estimate), Surrey (${K.surrey_vacancy_2025.toFixed(1)}%) and Richmond (${K.richmond_vacancy_2025.toFixed(1)}%) were already at or above 3% in 2025; if 2026 also clears 3%, they could opt out from June 1, 2027, letting competing listings back mid-year.`,
   "Kept the recommendation in Vancouver and rated opt-out supply risk low for 2027; flagged it for 2028 if 2026-27 vacancy stays at or above 3%."]],
  "Decision log (2/2)");
 
@@ -266,13 +268,13 @@ const AS = [["Purchase price", `2026 assessed median by local area x GVR 1-year 
   ["Transfer tax / closing / furnishing", "BC PTT brackets (1/2/3/+2%); 0.6% closing; $25k per condo"],
   ["Platform fee", "15.5% Airbnb host-only fee"], ["Management / maintenance", "20% of nightly revenue; 10% of furnished-stay rent; 5% maintenance"],
   ["Fixed costs per condo", "Strata $500/mo, utilities $300/mo, insurance $1,800/yr, property tax 0.336% of value"],
-  ["Licences", "City STR licence $1,060 (2025 median fee paid); provincial registration $450"],
+  ["Licences", `City STR licence $${Math.round(K.city_str_licence_fee).toLocaleString("en-US")} (2026 median fee paid); provincial registration $450`],
   ["Vacancy taxes (if 6-month test fails)", "Empty Homes Tax 3% + SVT 1% of assessed value"],
-  ["Furnished 30+ night rent", `Lower-quartile Airbnb monthly ask: $${Math.round(D.mtr[0][1]).toLocaleString()} (1BR), $${Math.round(D.mtr[1][1]).toLocaleString()} (2BR); simulated at 70-100%`],
+  ["Furnished 30+ night rent", `Lower-quartile Airbnb monthly ask: $${Math.round(D.mtr[0][1]).toLocaleString()} (1BR), $${Math.round(D.mtr[1][1]).toLocaleString()} (2BR); 70-100% simulated; 6 months let directly`],
   ["Occupancy", "Inside Airbnb review-based estimate, trailing 12 months (capped at 255 nights)"],
-  ["Long-term rental benchmark", "CMHC Oct 2025 Downtown average rent $2,198/mo; 8% management, 5% maintenance, no furnishing"],
+  ["Long-term rental benchmark", `StatCan 46-10-0092-01, Q1 2026 asking rent, Vancouver CMA: condo $${Math.round(K.ltr_rent_condo_month).toLocaleString("en-US")}/mo (1-2BR mix), 3BR+ house $${Math.round(K.ltr_rent_house_month).toLocaleString("en-US")}/mo; 8% management, 5% maintenance, no furnishing`],
   ["Simulation shocks", "Nightly rate sd 7%, occupancy sd 8%, launch ramp-up 85-100%, price paid sd 3%"],
-  ["Reserve", `${m$(10e6 - K.B_capital)} left after 12 units (a 13th does not fit); covers about 3 years of vacancy tax`]];
+  ["Reserve", `${m$(10e6 - K.B_capital)} left after 12 units; a 13th (~$748k) breaks the 3% cash buffer; ~3 years of vacancy tax`]];
 s.addTable([[TH("Assumption"), TH("Value and source")]].concat(AS.map((r) => [{ text: r[0], options: Object.assign({}, tdo, { bold: true, fontSize: 10 }) }, { text: r[1], options: Object.assign({}, tdo, { fontSize: 10 }) }])),
   { x: 0.5, y: 1.15, w: 9.0, colW: [2.7, 6.3], border: { type: "solid", pt: 0.5, color: "D9D8D3" }, margin: 0.05, rowH: 0.3, autoPage: false });
 
@@ -291,7 +293,7 @@ para(s, [head("Validation"),
 para(s, [head("Limitations"),
   line("Occupancy and revenue are estimates; reviews are a proxy for stays, and 17% of comparables sit at the 255-night cap (understates the best units)."),
   line("No bedroom-level purchase prices: the area's median strata value is matched to 1-2BR revenue."),
-  line("Furnished monthly rents are asking prices; strata fees and which buildings allow short stays are not in any dataset used."),
+  line(`Furnished monthly rents are asking prices, assumed fully let for 6 months and leased directly (listing them on Airbnb: -${(K.furnished_on_airbnb_yield_cost * 100).toFixed(1)} pt); strata fees and which buildings allow short stays are not in any dataset used.`),
   line("Whether 30+ night furnished stays count as tenancies for the Empty Homes Tax, SVT and tenancy law needs a legal opinion."),
   line("One scrape (15 Jun - 6 Jul 2026); listing coordinates are jittered by Inside Airbnb. Compliance shares are estimates.")],
   { x: 5.15, y: 1.15, w: 4.35, h: 3.95, fontSize: 10.5, paraSpaceAfter: 4 });
@@ -300,7 +302,7 @@ para(s, [head("Limitations"),
 s = apx("Data-quality checks on the 15 June 2026 snapshot");
 const DQ = [["Rows / unique ids", `${K.raw_listings} / ${K.raw_listings} (no duplicates); 90 columns, not the ~75 in the brief`],
   ["Scrape dates", "Jun 15 (1,295), Jun 16 (3,058), Jul 6 (2,156): one snapshot, three crawl days"],
-  ["Price", `Text, parsed; 10.2% missing; ${K.pct_prices_from_90night_quotes}% from 90-night quotes; 337 under $30, 21 over $3,000`],
+  ["Price", `Text, parsed; 10.2% missing; ${K.pct_prices_from_90night_quotes}% from quotes of 28+ nights (mostly 90); 337 under $30, 21 over $3,000`],
   ["Minimum nights", `${K.pct_entire_homes_min30}% of entire homes require 30+ nights (monthly rentals, not STRs)`],
   ["Occupancy estimate", `Capped at 255 nights; ${K.listings_at_occupancy_cap} listings at the cap`],
   ["Neighbourhoods", "23 Inside Airbnb labels vs 22 City local areas: re-assigned by point-in-polygon to official boundaries"],
@@ -320,7 +322,7 @@ s.addChart(pres.charts.BAR, [
   Object.assign({}, AX, { x: 0.5, y: 1.15, w: 5.6, h: 3.6, barDir: "bar", barGrouping: "stacked", chartColors: [HEX.blue, HEX.grey], catAxisOrientation: "maxMin",
     valAxisMinVal: 0, valAxisMaxVal: 7, valAxisMajorUnit: 1, valAxisLabelFormatCode: '0"%"', showValue: true, dataLabelPosition: "inEnd", dataLabelColor: "FFFFFF",
     dataLabelFormatCode: '0.0"%";;;', showLegend: false, barGapWidthPct: 40,
-    showTitle: true, title: "Purpose-built rental vacancy, October (CMHC Rental Market Survey)", titleFontSize: 11, titleColor: "0E2A47" }));
+    showTitle: true, title: "Purpose-built rental vacancy, October (CMHC, published city rates)", titleFontSize: 11, titleColor: "0E2A47" }));
 para(s, [head("The rule"), line("A municipality at 3%+ vacancy two years running may opt out of the principal-residence requirement. From 2027: request by Feb 28, effective June 1.", { paraSpaceAfter: 8 }),
   head("What it means for 2027"), line(`Vancouver needs 2025 and 2026 at 3%+; 2025 was ${K.city_vacancy_2025.toFixed(1)}%. Earliest effect: June 2028.`),
   line("Suburbs already above 3% could open to new competing listings on June 1, 2027 if their 2026 rate also clears 3%: five months into DDD's measured year.")],

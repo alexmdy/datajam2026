@@ -52,11 +52,28 @@ C0 = pd.read_csv(os.path.join(PROC, "listings_all.csv"))
 base = U[(U.segment == 'condo_1-2br') & (U.local_area == 'Downtown')]
 out['downtown_condo_median_rev_str'] = base.rev_str.median()
 
-# 3) Long-term-rental benchmark for the same Downtown condo (CMHC Oct-2025 average rent, Downtown zone)
+# 3) Long-term-rental benchmarks, condo and house, on one source: StatCan Quarterly Rent Statistics
+#    (table 46-10-0092-01, average ASKING rent, Vancouver CMA, Q1 2026 = latest published before the case date).
+#    Asking rent is what a new lease would get today. CMA-wide rents are a conservative proxy for City of Vancouver.
+lt = A['long_term_rental']
+qrs = pd.read_csv(os.path.join(RAW, "statcan", "statcan_46100092_vancouver.csv"))
+qrs = qrs[(qrs.REF_DATE == lt['rent_source_quarter']) & (qrs.Estimates == 'Average asking rent')].set_index('Rental unit type').VALUE
+share_2br = (base.bedrooms.fillna(1).clip(1, 2) == 2).mean()      # bedroom mix of the Downtown 1-2BR comparables
+rent_condo = (1 - share_2br) * qrs['Apartment - 1 bedroom'] + share_2br * qrs['Apartment - 2 bedrooms']
+rent_house = qrs['House - 3 or more bedrooms']
+def ltr_yield(rent, price, capital_unfurnished, strata, insurance):
+    noi = 12 * rent * (1 - lt['management_pct'] - op['maintenance_pct']) - strata - insurance - price * op['property_tax_rate']
+    return noi / capital_unfurnished
+seg_med = U.groupby('segment')[['price', 'capital']].median()
+out['ltr_rent_condo_month'] = rent_condo; out['ltr_rent_house_month'] = rent_house
+out['ltr_benchmark_yield'] = ltr_yield(rent_condo, base.price.iloc[0], base.capital.iloc[0] - cap['furnishing_condo'],
+                                       op['strata_fee_condo_month'] * 12, lt['insurance_condo_year'])
+out['ltr_benchmark_yield_house'] = ltr_yield(rent_house, seg_med.loc['house_3br+', 'price'],
+                                             seg_med.loc['house_3br+', 'capital'] - cap['furnishing_house'], 0, lt['insurance_house_year'])
+# cross-check: previous condo benchmark on CMHC Oct-2025 average (sitting-tenant) rent, Downtown zone
 cm = pd.read_csv(os.path.join(RAW, "cmhc", "cmhc_rms_vancouver_cma_by_zone_oct2025.csv")).set_index('zone')
-rent = float(cm.loc['Downtown', 'avg_rent']); price = base.price.iloc[0]; capital_ltr = base.capital.iloc[0] - cap['furnishing_condo']
-noi_ltr = 12 * rent * (1 - 0.08 - op['maintenance_pct']) - op['strata_fee_condo_month'] * 12 - 600 - price * op['property_tax_rate']
-out['ltr_benchmark_rent_month'] = rent; out['ltr_benchmark_yield'] = noi_ltr / capital_ltr
+out['ltr_benchmark_yield_cmhc_downtown'] = ltr_yield(float(cm.loc['Downtown', 'avg_rent']), base.price.iloc[0],
+                                       base.capital.iloc[0] - cap['furnishing_condo'], op['strata_fee_condo_month'] * 12, lt['insurance_condo_year'])
 out['downtown_hybrid_median_yield'] = base.yield_hybrid.median(); out['downtown_str_only_median_yield'] = base.yield_str.median()
 
 # 4) Compliance estimate by local area (ESTIMATE: listings and licences are not counted on the same basis)
@@ -72,16 +89,23 @@ comp.round(3).to_csv(os.path.join(OUT, "validation_compliance_estimate.csv"))
 out['citywide_share_active_nightly_showing_licence'] = (act.lic_cat == 'city_licence').mean()
 out['citywide_issued_2026_licences'] = int(li.sum()); out['citywide_active_nightly_listings'] = len(act)
 
-# 5) Opt-out test: City of Vancouver = CMHC zones 1-10, unit-weighted vacancy
+# 5) Opt-out test uses each municipality's PUBLISHED CMHC rate (HMIP table 2.1.31.2, city = census subdivision)
+cv = pd.read_csv(os.path.join(RAW, "cmhc", "cmhc_rms_city_vacancy_oct2023_2025.csv"))
+for _, rw in cv[cv.city == "Vancouver"].iterrows(): out[f'city_vacancy_{rw.year}'] = float(rw.vacancy_rate_pct)
+for _, rw in cv[(cv.city != "Vancouver") & (cv.year == 2025)].iterrows():
+    out[f'vacancy_2025_{rw.city}'] = float(rw.vacancy_rate_pct)   # reliability grade: see the raw CSV
+# cross-check: City of Vancouver rebuilt from CMHC zones 1-10, unit-weighted (should be close to the published rate)
 city = ["West End/Stanley Park", "English Bay", "Downtown", "South Granville/Oak", "Kitsilano/Point Grey",
         "Westside/Kerrisdale", "Marpole", "Mount Pleasant/Renfrew Heights", "East Hastings", "Southeast Vancouver"]
 for y in [2023, 2024, 2025]:
     t = pd.read_csv(os.path.join(RAW, "cmhc", f"cmhc_rms_vancouver_cma_by_zone_oct{y}.csv")).set_index('zone')
     t = t.loc[city]; t['v'] = pd.to_numeric(t.vacancy_rate_pct, errors='coerce'); t = t.dropna(subset=['v'])
-    out[f'city_vacancy_{y}'] = (t.v * t.units).sum() / t.units.sum()
-    if y == 2025:
-        oth = pd.read_csv(os.path.join(RAW, "cmhc", f"cmhc_rms_vancouver_cma_by_zone_oct{y}.csv")).set_index('zone')
-        for z in ["North Burnaby", "New Westminster", "Surrey", "Richmond"]: out[f'vacancy_2025_{z}'] = float(oth.loc[z, 'vacancy_rate_pct'])
+    out[f'city_vacancy_{y}_zone_weighted_check'] = (t.v * t.units).sum() / t.units.sum()
+
+# 5b) City STR licence fee: median fee paid on 2026 licences (the assumption used for 2027)
+lic_fee = pd.to_numeric(lic[lic.folderyear.astype(str) == '26'].feepaid, errors='coerce').median()
+out['city_str_licence_fee_2026_median'] = lic_fee
+assert abs(lic_fee - op['city_str_licence_year']) < 1, "assumptions.yaml licence fee is out of date"
 pd.Series(out).round(4).to_csv(os.path.join(OUT, "validation_summary.csv"), header=['value'])
 print(pd.Series(out).round(4).to_string())
 
@@ -107,6 +131,11 @@ cases = [("Nightly rate (ADR) -10% / +10%", port_yield(adr=.9), port_yield(adr=1
          ("6-month 30-day test FAILED (STR all year + EHT + SVT)", port_yield(fail6=True), b)]
 T = pd.DataFrame(cases, columns=['driver', 'low', 'high']); T['base'] = b
 T.round(4).to_csv(os.path.join(OUT, "sensitivity.csv"), index=False); print(T.round(4).to_string(index=False))
+
+# 6b) Furnished months listed on Airbnb instead of leased directly: the 15.5% platform fee also hits that rent
+mtr_fee_cost = (rv['mtr_months'] * D.mtr_rent * 0.85 * op['platform_fee_pct']).mean() / D.capital.mean()
+pd.Series({"furnished_on_airbnb_yield_cost": mtr_fee_cost}).round(4).to_csv(os.path.join(OUT, "validation_furnished_fee.csv"), header=["value"])
+print(f"furnished months on Airbnb: -{mtr_fee_cost*100:.2f} pts")
 
 # 7) Downtown comparables by bedrooms (mix guidance)
 bd = base.groupby(base.bedrooms.fillna(1).clip(0, 2)).agg(n=('id', 'size'), rev_str=('rev_str', 'median'), adr=('adr_2027', 'median'), nights=('nights', 'median'))

@@ -19,15 +19,14 @@ for c in ["last_scraped","calendar_last_scraped","first_review","last_review","h
 L["price_num"] = money(L["price"])
 L["quote_nights"] = (L.price_quote_checkout_date - L.price_quote_checkin_date).dt.days
 L["quote_lead_days"] = (L.price_quote_checkin_date - L.last_scraped).dt.days
-lic = L["license"].fillna("")
-# licence status categories only (numbers themselves are never output)
-L["lic_cat"] = np.select(
-    [lic.str.contains(r"Municipal registration number: \d{2}-\d{6}"),
-     lic.str.contains("Exempt", case=False),
-     lic.str.len() > 0],
-    ["city_licence", "exempt", "other_text"], default="none")
+# raw files hold only the licence CATEGORY (src/ia_sanitize.py); licence numbers are never stored
+if "license_category" in L.columns:
+    L["lic_cat"] = L["license_category"]
+else:                                   # an unsanitized download: categorize, then discard the text
+    from ia_sanitize import licence_category
+    L["lic_cat"] = licence_category(L["license"])
 L["str_policy"] = np.where(L.minimum_nights >= 30, "monthly_30plus", "nightly_lt30")
-L = L.drop(columns=["license", "host_id"])   # keep only the licence category, never the numbers
+L = L.drop(columns=[c for c in ("license", "license_category", "host_id") if c in L.columns])   # keep only lic_cat
 
 # ---- spatial join to official local areas (IA has 23 labels incl. 'Downtown Eastside'; City has 22) ----
 L["local_area"] = assign_local_area(L.latitude.values, L.longitude.values)

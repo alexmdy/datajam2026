@@ -44,7 +44,7 @@ for xi, v in zip(x - w/2 - 0.01, c): ax.text(xi, v + (0.15 if v >= 0 else -0.45)
 for xi, v in zip(x + w/2 + 0.01, h): ax.text(xi, v + (0.15 if v >= 0 else -0.45), f"{v:.1f}%", ha="center", fontsize=10, color=INK)
 ax.set_xticks(x); ax.set_xticklabels([r[0] for r in rows]); ax.set_ylabel("Median 2027 net yield (%)")
 ax.set_ylim(-4.2, 5.4); ax.legend(frameon=False, fontsize=9, loc="lower right")
-finish(fig, "fig_operating_model.png", CREDIT + "; CMHC RMS Oct 2025; City of Vancouver 2026 assessments")
+finish(fig, "fig_operating_model.png", CREDIT + "; StatCan 46-10-0092-01 Q1 2026 asking rents; City of Vancouver 2026 assessments")
 
 # 3) seasonality
 m = pd.read_csv(os.path.join(OUT, "seasonality_monthly.csv"), index_col=0)
@@ -99,12 +99,12 @@ finish(fig, "fig_tornado.png")
 # 7) opt-out test
 fig, ax = plt.subplots(figsize=(6.4, 2.8))
 yrs = [2023, 2024, 2025]; v = [val[f'city_vacancy_{y}'] for y in yrs]
-labels = [f"City of Vancouver {y}" for y in yrs] + ["North Burnaby 2025", "New Westminster 2025", "Surrey 2025", "Richmond 2025"]
-vals = v + [val['vacancy_2025_North Burnaby'], val['vacancy_2025_New Westminster'], val['vacancy_2025_Surrey'], val['vacancy_2025_Richmond']]
+labels = [f"City of Vancouver {y}" for y in yrs] + ["Burnaby 2025", "New Westminster 2025 (grade d)", "Surrey 2025", "Richmond 2025"]
+vals = v + [val['vacancy_2025_Burnaby'], val['vacancy_2025_New Westminster'], val['vacancy_2025_Surrey'], val['vacancy_2025_Richmond']]
 cols = [BLUE] * 3 + [GREY] * 4; yy = np.arange(len(vals))[::-1]
 ax.barh(yy, vals, color=cols, height=0.6); ax.axvline(3, color=RED, lw=1.4, ls=(0, (4, 3)))
 ax.text(3.05, len(vals) - 0.6, "3% opt-out test", color=INK2, fontsize=9)
 for yi, x in zip(yy, vals): ax.text(x + 0.08, yi, f"{x:.1f}%", va="center", fontsize=9.5)
 ax.set_yticks(yy); ax.set_yticklabels(labels, fontsize=9); ax.set_xlabel("Purpose-built rental vacancy rate, October (%)"); ax.set_xlim(0, 7)
-finish(fig, "fig_optout.png", "Source: CMHC Rental Market Survey, HMIP table 2.1.31.3 (City = unit-weighted zones 1-10)")
+finish(fig, "fig_optout.png", "Source: CMHC Rental Market Survey, HMIP table 2.1.31.2, published city (CSD) rates; grade d = use with caution")
 print("figures:", sorted(os.listdir(FIG)))

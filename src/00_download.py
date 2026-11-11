@@ -4,6 +4,7 @@ Usage: python src/00_download.py
 """
 import io, os, urllib.request
 import pandas as pd
+from ia_sanitize import sanitize   # strips host names, URLs, licence numbers, reviewer data
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
@@ -15,6 +16,7 @@ def get(url, dest, timeout=300):
     print("GET", url)
     with urllib.request.urlopen(url, timeout=timeout) as r, open(dest, "wb") as f:
         f.write(r.read())
+    if "insideairbnb" in dest: sanitize(dest)
 
 # 1) Inside Airbnb Vancouver -- REQUIRED snapshot 2026-06-15 (detailed files)
 IA = "https://data.insideairbnb.com/canada/bc/vancouver/{d}/{f}"
@@ -51,6 +53,40 @@ for y in [2023, 2024, 2025]:
     with urllib.request.urlopen(HMIP.format(y=y), timeout=120) as r:
         t = pd.read_html(io.StringIO(r.read().decode("utf8")))[0]
     t.columns = cols; t["survey"] = f"October {y}"; t.to_csv(dest, index=False); print("saved", dest)
+
+# 3b) CMHC Rental Market Survey, CITY-level (census subdivision) vacancy rates, HMIP table 2.1.31.2, October 2023-2025.
+#     The opt-out test is about a municipality's published rate, so these official city figures are used for it.
+CSD = {"Vancouver": 5915022, "Burnaby": 5915025, "New Westminster": 5915029, "Surrey": 5915004, "Richmond": 5915015}
+HMIP_CSD = ("https://www03.cmhc-schl.gc.ca/hmip-pimh/en/TableMapChart/Table?TableId=2.1.31.2&GeographyId={g}"
+            "&GeographyTypeId=4&DisplayAs=Table&Ytd=False&DefaultDataField=vacancy_rate_pct&Survey=Rms"
+            "&ForTimePeriod.Year={y}&ForTimePeriod.Month=10&BreakdownGeographyTypeId=0")
+dest = os.path.join(RAW, "cmhc", "cmhc_rms_city_vacancy_oct2023_2025.csv")
+if os.path.exists(dest): print("exists", dest)
+else:
+    rows = []
+    for city, g in CSD.items():
+        for y in [2023, 2024, 2025]:
+            with urllib.request.urlopen(HMIP_CSD.format(g=g, y=y), timeout=120) as r:
+                t = pd.read_html(io.StringIO(r.read().decode("utf8")))[0]
+            rows.append({"city": city, "csd_name": t.iloc[0, 0], "year": y, "vacancy_rate_pct": t.iloc[0, 1],
+                         "reliability": t.iloc[0, 2], "units": t.iloc[0, -1]})
+    pd.DataFrame(rows).to_csv(dest, index=False); print("saved", dest)
+# CMHC reliability codes: a = excellent, b = very good, c = good, d = poor (use with caution).
+
+# 5) Statistics Canada, Quarterly Rent Statistics, table 46-10-0092-01 (asking rents by unit type and bedrooms,
+#    experimental estimates, conducted with CMHC). Free CSV, no login. Only the Vancouver CMA rows are kept.
+#    Used for the long-term-rental benchmark: Q1 2026 (released 2026-06-09) is the latest quarter published
+#    before the 2026-06-15 case snapshot; later quarters in the file are ignored.
+dest = os.path.join(RAW, "statcan", "statcan_46100092_vancouver.csv")
+if os.path.exists(dest): print("exists", dest)
+else:
+    import zipfile
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    print("GET StatCan 46-10-0092-01")
+    with urllib.request.urlopen("https://www150.statcan.gc.ca/n1/tbl/csv/46100092-eng.zip", timeout=300) as r:
+        z = zipfile.ZipFile(io.BytesIO(r.read()))
+    t = pd.read_csv(z.open("46100092.csv"), low_memory=False)
+    t[t.GEO.str.startswith("Vancouver")].to_csv(dest, index=False); print("saved", dest)
 
 # 4) Greater Vancouver REALTORS MLS HPI, June 2026 stats package (public PDF). The site blocks automated
 #    download, so the six benchmark figures used are transcribed in data/manual/gvr_hpi_june2026.csv with the URL.

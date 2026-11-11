@@ -1,5 +1,5 @@
 option,units,capital_deployed,mix,noi_p10,noi_p50,noi_p90,yield_p10,yield_p50,yield_p90,spread_p90_p10,prob_yield_below_2pct,yield_on_10m_p50
-A. Few high-value: detached houses,5,8497000.0,3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house),155934.9882,226808.5858,313578.5881,0.0183,0.0267,0.037,0.0186,0.1583,0.0227
-"B. Many modest: condos, Downtown only",12,8981000.0,12x Downtown (condo),282707.1235,369091.9658,475322.6257,0.0313,0.0411,0.0531,0.0218,0.0012,0.0369
-"C. Many modest: condos, Downtown + West End + Strathcona",12,9034000.0,8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo),262540.055,346079.2157,445081.5472,0.029,0.0383,0.0496,0.0205,0.0022,0.0346
-D. Barbell: 1 house + condos,11,9131000.0,10x Downtown (condo); 1x Hastings-Sunrise (house),270253.6072,358645.3832,463111.874,0.0296,0.0394,0.0509,0.0213,0.0021,0.0359
+A. Few high-value: detached houses,5,8497000.0,3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house),155694.9882,226568.5858,313338.5881,0.0183,0.0267,0.0369,0.0186,0.1596,0.0227
+"B. Many modest: condos, Downtown only",12,8981000.0,12x Downtown (condo),282131.1235,368515.9658,474746.6257,0.0312,0.0411,0.053,0.0218,0.0013,0.0369
+"C. Many modest: condos, Downtown + West End + Strathcona",12,9034000.0,8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo),261964.055,345503.2157,444505.5472,0.0289,0.0382,0.0495,0.0205,0.0023,0.0346
+D. Barbell: 1 house + condos,11,9131000.0,10x Downtown (condo); 1x Hastings-Sunrise (house),269725.6072,358117.3832,462583.874,0.0295,0.0393,0.0508,0.0213,0.0023,0.0358

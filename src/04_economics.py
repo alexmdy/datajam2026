@@ -67,7 +67,9 @@ mtr_part = rv['mtr_months'] * C.mtr_rent
 C['noi_hybrid'] = (str_part * (1 - str_fees) + mtr_part * (1 - op['management_pct_mtr'] - op['maintenance_pct'])
                    - fixed - op['city_str_licence_year'] - op['provincial_registration_year'])
 C['noi_str_no_vacancy_tax'] = C.noi_str + C.vacancy_taxes
-for k in ['noi_str', 'noi_hybrid', 'noi_str_no_vacancy_tax']:
+# D2 check: the same hybrid NOI if Inside Airbnb's naive revenue (June quote x nights) were used
+C['noi_hybrid_naive'] = C.noi_hybrid + (C.rev_ia_naive - C.rev_str) * S.peak_may_oct_revenue_share * (1 - str_fees)
+for k in ['noi_str', 'noi_hybrid', 'noi_str_no_vacancy_tax', 'noi_hybrid_naive']:
     C['yield_' + k[4:]] = C[k] / C.capital
 C.to_csv(os.path.join(PROC, "unit_economics.csv"), index=False)
 
@@ -97,5 +99,5 @@ br = pd.Series({"IA-style revenue (June quote x nights)": c.rev_ia_naive.median(
                 "after seasonal ADR (2027 base, STR-only)": c.rev_str.median(),
                 "hybrid: May-Oct nightly + 6 months furnished": c.rev_hybrid.median()})
 br.round(0).to_csv(os.path.join(OUT, "revenue_bridge.csv"), header=["median_annual_revenue"]); print(br.round(0))
-seg = C.groupby('segment')[['price','capital','rev_str','rev_hybrid','vacancy_taxes','noi_str','noi_hybrid','yield_str','yield_hybrid','yield_str_no_vacancy_tax']].median()
+seg = C.groupby('segment')[['price','capital','rev_str','rev_hybrid','vacancy_taxes','noi_str','noi_hybrid','yield_str','yield_hybrid','yield_str_no_vacancy_tax','yield_hybrid_naive']].median()
 seg.round(3).to_csv(os.path.join(OUT, "segment_summary.csv")); print(seg.round(3).T)

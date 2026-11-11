@@ -8,17 +8,24 @@ share_est_occ_below_calendar_upper_bound,0.6968
 split_half_spearman_median,0.75
 split_half_spearman_p10,0.4643
 downtown_condo_median_rev_str,64223.7933
-ltr_benchmark_rent_month,2198.0
-ltr_benchmark_yield,0.0193
-downtown_hybrid_median_yield,0.0464
+ltr_rent_condo_month,2614.0
+ltr_rent_house_month,4860.0
+ltr_benchmark_yield,0.0253
+ltr_benchmark_yield_house,0.0229
+ltr_benchmark_yield_cmhc_downtown,0.0193
+downtown_hybrid_median_yield,0.0463
 downtown_str_only_median_yield,-0.0072
 citywide_share_active_nightly_showing_licence,0.8922
 citywide_issued_2026_licences,3893.0
 citywide_active_nightly_listings,3848.0
-city_vacancy_2023,0.8023
-city_vacancy_2024,1.5549
-city_vacancy_2025,2.7395
-vacancy_2025_North Burnaby,5.6
+city_vacancy_2023,0.8
+city_vacancy_2024,1.5
+city_vacancy_2025,2.7
+vacancy_2025_Burnaby,5.9
 vacancy_2025_New Westminster,5.8
 vacancy_2025_Surrey,4.3
 vacancy_2025_Richmond,3.1
+city_vacancy_2023_zone_weighted_check,0.8023
+city_vacancy_2024_zone_weighted_check,1.5549
+city_vacancy_2025_zone_weighted_check,2.7395
+city_str_licence_fee_2026_median,1108.0

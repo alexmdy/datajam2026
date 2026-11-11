@@ -17,9 +17,14 @@ operating:
   strata_fee_condo_month: 500     # typical 1-2BR Vancouver condo (assumption; not in any dataset used)
   insurance_condo_year: 1800      # STR-endorsed condo policy (assumption)
   insurance_house_year: 4500
-  city_str_licence_year: 1060     # median fee paid, 2025 STR licences (Vancouver Open Data business licences)
+  city_str_licence_year: 1108     # median fee paid, 2026 STR licences (Vancouver Open Data business licences; checked in 06)
   provincial_registration_year: 450  # BC STR registry, host not resident (gov.bc.ca)
   property_tax_rate: 0.00336394   # City of Vancouver 2026 residential, all levies, per $ of assessed value
+long_term_rental:                  # benchmark only (06_validation.py); unfurnished 12-month lease
+  rent_source_quarter: "2026-01"    # StatCan 46-10-0092-01 Q1 2026, latest published before the case date
+  management_pct: 0.08              # leasing + management for a long-term tenant (assumption)
+  insurance_condo_year: 600         # landlord policy, about 1/3 of the STR-endorsed premium (assumption)
+  insurance_house_year: 1500        # same 1/3 ratio applied to the house premium (assumption)
 taxes_if_not_rented_6_months_30day:
   empty_homes_tax_pct: 0.03       # City of Vancouver Vacancy Tax By-law 11674 (3% for 2026)
   svt_pct: 0.01                   # BC Speculation & Vacancy Tax, Canadian-owned from 2026 (4% foreign from 2027)

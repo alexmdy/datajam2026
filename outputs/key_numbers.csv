@@ -10,6 +10,8 @@ mar_over_jun_price,0.7213,02
 annual_adr_factor,0.9142,02
 may_oct_revenue_share,0.7332,02
 rev_bridge_ia,64764.0,04_economics.py -> revenue_bridge.csv
+condo_yield_hybrid_naive_revenue,0.046,04 -> segment_summary.csv
+house_yield_hybrid_naive_revenue,0.021,04
 rev_bridge_str,56995.0,04
 rev_bridge_hybrid,67025.0,04
 condo_yield_str,-0.014,04 -> segment_summary.csv
@@ -23,28 +25,38 @@ downtown_capital,748382.0,04
 downtown_n,475.0,04 -> area_ranking.csv
 downtown_adr,417.3049,04
 downtown_nights,156.0,04
-downtown_yield_hybrid,0.0464,04
-downtown_ci,0.045-0.048,04
-ltr_benchmark_yield,0.0193,06_validation.py -> validation_summary.csv
+downtown_yield_hybrid,0.0463,04
+downtown_ci,0.044-0.048,04
+ltr_benchmark_yield,0.0253,06_validation.py -> validation_summary.csv
+ltr_benchmark_yield_house,0.0229,06_validation.py -> validation_summary.csv
+ltr_rent_condo_month,2614.0,"06_validation.py (StatCan 46-10-0092-01, Q1 2026 asking rent)"
+ltr_rent_house_month,4860.0,"06_validation.py (StatCan 46-10-0092-01, Q1 2026 asking rent)"
 B_units,12,05_portfolio.py -> portfolio_options.csv
 B_capital,8981000.0,05
-B_noi_p10,282707.1235,05
-B_noi_p50,369091.9658,05
-B_noi_p90,475322.6257,05
-B_p10,0.0313,05
+B_noi_p10,282131.1235,05
+B_noi_p50,368515.9658,05
+B_noi_p90,474746.6257,05
+B_p10,0.0312,05
 B_p50,0.0411,05
-B_p90,0.0531,05
+B_p90,0.053,05
 B_yield_on_10m,0.0369,05
 A_p50,0.0267,05
-A_prob_below_2,0.1583,05
-C_p50,0.0383,05
+A_prob_below_2,0.1596,05
+C_p50,0.0382,05
 B_spread,0.0218,05
 C_spread,0.0205,05
 fail6_yield,-0.0081,06 -> sensitivity.csv
 value_check_range,-0.020 to +0.045,03 -> value_validation.csv
 occ_calendar_spearman,0.0549,06
 split_half_spearman,0.75,06
-city_vacancy_2024,1.5549,06
-city_vacancy_2025,2.7395,06
+city_vacancy_2023,0.8,"06 (CMHC HMIP 2.1.31.2, Vancouver CY)"
+city_vacancy_2024,1.5,"06 (CMHC HMIP 2.1.31.2, Vancouver CY)"
+city_vacancy_2025,2.7,"06 (CMHC HMIP 2.1.31.2, Vancouver CY)"
+burnaby_vacancy_2025,5.9,06
+new_westminster_vacancy_2025,5.8,06 (CMHC reliability d)
+surrey_vacancy_2025,4.3,06
+richmond_vacancy_2025,3.1,06
+city_str_licence_fee,1108.0,"06 (Vancouver Open Data, 2026 median fee paid)"
+furnished_on_airbnb_yield_cost,0.0046,06 -> validation_furnished_fee.csv
 licence_share_active,0.8922,06
 downtown_1br_share,0.6,06 -> downtown_by_bedrooms.csv

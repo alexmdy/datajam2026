@@ -1,0 +1,16 @@
+city,csd_name,year,vacancy_rate_pct,reliability,units
+Vancouver,Vancouver (CY),2023,0.8,a,63828
+Vancouver,Vancouver (CY),2024,1.5,a,64400
+Vancouver,Vancouver (CY),2025,2.7,a,65611
+Burnaby,Burnaby (CY),2023,1.2,a,11382
+Burnaby,Burnaby (CY),2024,1.5,a,11374
+Burnaby,Burnaby (CY),2025,5.9,c,11771
+New Westminster,New Westminster (CY),2023,0.8,a,9956
+New Westminster,New Westminster (CY),2024,1.4,a,10173
+New Westminster,New Westminster (CY),2025,5.8,d,10622
+Surrey,Surrey (CY),2023,1.5,a,7345
+Surrey,Surrey (CY),2024,1.7,b,7624
+Surrey,Surrey (CY),2025,4.3,b,8201
+Richmond,Richmond (CY),2023,0.2,b,3513
+Richmond,Richmond (CY),2024,0.9,a,3613
+Richmond,Richmond (CY),2025,3.1,b,3311

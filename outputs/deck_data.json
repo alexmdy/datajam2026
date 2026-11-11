@@ -11,6 +11,8 @@
   "annual_adr_factor": 0.9142,
   "may_oct_revenue_share": 0.7332,
   "rev_bridge_ia": 64764.0,
+  "condo_yield_hybrid_naive_revenue": 0.046,
+  "house_yield_hybrid_naive_revenue": 0.021,
   "rev_bridge_str": 56995.0,
   "rev_bridge_hybrid": 67025.0,
   "condo_yield_str": -0.014,
@@ -24,29 +26,39 @@
   "downtown_n": 475.0,
   "downtown_adr": 417.3049,
   "downtown_nights": 156.0,
-  "downtown_yield_hybrid": 0.0464,
-  "downtown_ci": "0.045-0.048",
-  "ltr_benchmark_yield": 0.0193,
+  "downtown_yield_hybrid": 0.0463,
+  "downtown_ci": "0.044-0.048",
+  "ltr_benchmark_yield": 0.0253,
+  "ltr_benchmark_yield_house": 0.0229,
+  "ltr_rent_condo_month": 2614.0,
+  "ltr_rent_house_month": 4860.0,
   "B_units": 12.0,
   "B_capital": 8981000.0,
-  "B_noi_p10": 282707.1235,
-  "B_noi_p50": 369091.9658,
-  "B_noi_p90": 475322.6257,
-  "B_p10": 0.0313,
+  "B_noi_p10": 282131.1235,
+  "B_noi_p50": 368515.9658,
+  "B_noi_p90": 474746.6257,
+  "B_p10": 0.0312,
   "B_p50": 0.0411,
-  "B_p90": 0.0531,
+  "B_p90": 0.053,
   "B_yield_on_10m": 0.0369,
   "A_p50": 0.0267,
-  "A_prob_below_2": 0.1583,
-  "C_p50": 0.0383,
+  "A_prob_below_2": 0.1596,
+  "C_p50": 0.0382,
   "B_spread": 0.0218,
   "C_spread": 0.0205,
   "fail6_yield": -0.0081,
   "value_check_range": "-0.020 to +0.045",
   "occ_calendar_spearman": 0.0549,
   "split_half_spearman": 0.75,
-  "city_vacancy_2024": 1.5549,
-  "city_vacancy_2025": 2.7395,
+  "city_vacancy_2023": 0.8,
+  "city_vacancy_2024": 1.5,
+  "city_vacancy_2025": 2.7,
+  "burnaby_vacancy_2025": 5.9,
+  "new_westminster_vacancy_2025": 5.8,
+  "surrey_vacancy_2025": 4.3,
+  "richmond_vacancy_2025": 3.1,
+  "city_str_licence_fee": 1108.0,
+  "furnished_on_airbnb_yield_cost": 0.0046,
   "licence_share_active": 0.8922,
   "downtown_1br_share": 0.6
  },
@@ -92,11 +104,12 @@
   "condo": [
    -0.014,
    0.042,
-   0.0193
+   0.0253
   ],
   "house": [
    -0.031,
-   0.02
+   0.02,
+   0.0229
   ]
  },
  "season": [
@@ -125,9 +138,9 @@
    "Downtown",
    475,
    707000.0,
-   0.0464,
-   0.0446,
-   0.0483,
+   0.0463,
+   0.0445,
+   0.0482,
    -0.0072
   ],
   [
@@ -135,9 +148,9 @@
    "Strathcona",
    60,
    690000.0,
-   0.0381,
+   0.038,
    0.0339,
-   0.0414,
+   0.0413,
    -0.0152
   ],
   [
@@ -146,16 +159,16 @@
    33,
    750000.0,
    0.0367,
-   0.0275,
+   0.0274,
    0.0482,
-   -0.0202
+   -0.0203
   ],
   [
    "house_3br+",
    "Hastings-Sunrise",
    21,
    1549000.0,
-   0.0342,
+   0.0341,
    0.023,
    0.0462,
    -0.0147
@@ -166,9 +179,9 @@
    47,
    683000.0,
    0.032,
-   0.0279,
-   0.0347,
-   -0.024
+   0.0278,
+   0.0346,
+   -0.0241
   ],
   [
    "condo_1-2br",
@@ -176,8 +189,8 @@
    30,
    874000.0,
    0.0284,
-   0.0238,
-   0.0309,
+   0.0237,
+   0.0308,
    -0.0283
   ],
   [
@@ -187,7 +200,7 @@
    1676000.0,
    0.0244,
    0.0206,
-   0.0255,
+   0.0254,
    -0.0269
   ]
  ],
@@ -199,63 +212,63 @@
    "3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house)",
    0.0183,
    0.0267,
-   0.037,
-   0.1583
+   0.0369,
+   0.1596
   ],
   [
    "B. Many modest: condos, Downtown only",
    12,
    8981000.0,
    "12x Downtown (condo)",
-   0.0313,
+   0.0312,
    0.0411,
-   0.0531,
-   0.0012
+   0.053,
+   0.0013
   ],
   [
    "C. Many modest: condos, Downtown + West End + Strathcona",
    12,
    9034000.0,
    "8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo)",
-   0.029,
-   0.0383,
-   0.0496,
-   0.0022
+   0.0289,
+   0.0382,
+   0.0495,
+   0.0023
   ],
   [
    "D. Barbell: 1 house + condos",
    11,
    9131000.0,
    "10x Downtown (condo); 1x Hastings-Sunrise (house)",
-   0.0296,
-   0.0394,
-   0.0509,
-   0.0021
+   0.0295,
+   0.0393,
+   0.0508,
+   0.0023
   ]
  ],
  "tornado": [
   [
    "Nightly rate (ADR) -10% / +10%",
-   0.0381,
-   0.0454,
+   0.038,
+   0.0453,
    0.0417
   ],
   [
    "Occupancy -10% / +10%",
-   0.0381,
-   0.0454,
+   0.038,
+   0.0453,
    0.0417
   ],
   [
    "Furnished monthly rent: 70% / 100% of lower-quartile ask",
-   0.0373,
+   0.0372,
    0.0462,
    0.0417
   ],
   [
    "Purchase price +5% / -5%",
-   0.0396,
-   0.0441,
+   0.0395,
+   0.044,
    0.0417
   ],
   [
@@ -280,19 +293,19 @@
  "vacancy": [
   [
    "City of Vancouver 2023",
-   0.8023
+   0.8
   ],
   [
    "City of Vancouver 2024",
-   1.5549
+   1.5
   ],
   [
    "City of Vancouver 2025",
-   2.7395
+   2.7
   ],
   [
-   "North Burnaby 2025",
-   5.6
+   "Burnaby 2025",
+   5.9
   ],
   [
    "New Westminster 2025",
