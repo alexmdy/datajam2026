@@ -1,0 +1,27 @@
+zone,vacancy_rate_pct,vac_rel,availability_rate_pct,avail_rel,avg_rent,rent_rel,median_rent,med_rel,pct_change_rent,chg_rel,units,survey
+West End/Stanley Park,0.5,a,**,,1828,a,1750,a,10.8,d,3910,October 2023
+English Bay,0.9,a,**,,2020,a,1925,b,**,,6864,October 2023
+Downtown,1.4,a,**,,2143,a,2100,a,12.6,c,12251,October 2023
+South Granville/Oak,0.4,a,**,,1779,a,1691,a,6.9,c,9017,October 2023
+Kitsilano/Point Grey,0.9,a,**,,1987,a,1810,b,10.9,d,7542,October 2023
+Westside/Kerrisdale,1.1,a,**,,2079,a,1940,b,5.1,c,3407,October 2023
+Marpole,1.1,d,**,,1396,a,1375,b,**,,3869,October 2023
+Mount Pleasant/Renfrew Heights,0.5,a,**,,1760,a,1680,a,**,,7378,October 2023
+East Hastings,0.4,a,**,,1719,a,1600,a,10.6,c,6034,October 2023
+Southeast Vancouver,0.4,a,**,,1768,a,1677,b,6.5,b,3556,October 2023
+University Endowment Lands,0.3,a,**,,2413,a,2550,a,5.3,c,1475,October 2023
+Central Park/Metrotown,1.7,c,**,,1645,a,1500,b,9.7,c,5056,October 2023
+Southeast Burnaby,0.3,b,**,,1469,b,1438,b,12.8,d,2184,October 2023
+North Burnaby,1.0,a,**,,1752,a,1700,a,10.1,c,4142,October 2023
+New Westminster,0.8,a,**,,1622,a,1525,a,11.9,c,9956,October 2023
+North Vancouver CY,0.6,a,**,,1879,a,1800,b,5.1,d,6959,October 2023
+North Vancouver DM,2.8,b,**,,2332,a,2228,b,6.6,c,2429,October 2023
+West Vancouver,0.7,a,**,,2488,a,2300,a,6.6,b,2651,October 2023
+Richmond,0.2,b,**,,1862,a,1870,b,**,,3513,October 2023
+Delta,0.4,a,**,,1523,a,1430,b,11.4,d,1742,October 2023
+Surrey,1.5,a,**,,1565,a,1550,a,7.6,c,7345,October 2023
+White Rock,1.2,a,**,,1460,b,1350,b,**,,1427,October 2023
+Langley City and Langley DM,1.4,a,**,,1795,a,1775,b,8.9,c,4064,October 2023
+Tri-Cities,0.5,a,**,,1782,a,1750,a,12.0,c,5194,October 2023
+Maple Ridge/Pitt Meadows,1.0,a,**,,1460,a,1484,a,14.3,c,1902,October 2023
+Vancouver,0.9,a,**,,1828,a,1715,a,9.5,a,123867,October 2023

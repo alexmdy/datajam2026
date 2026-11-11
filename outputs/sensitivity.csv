@@ -1,0 +1,8 @@
+driver,low,high,base
+Nightly rate (ADR) -10% / +10%,0.0381,0.0454,0.0417
+Occupancy -10% / +10%,0.0381,0.0454,0.0417
+Furnished monthly rent: 70% / 100% of lower-quartile ask,0.0373,0.0462,0.0417
+Purchase price +5% / -5%,0.0396,0.0441,0.0417
+Management 25% / 15%,0.0386,0.0448,0.0417
+Strata fee $650 / $400 per month,0.0393,0.0433,0.0417
+6-month 30-day test FAILED (STR all year + EHT + SVT),-0.0081,0.0417,0.0417

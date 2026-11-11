@@ -1,0 +1,16 @@
+,value
+rows,6509
+unique_ids,6509
+scrape_dates,"2026-06-15:1295, 2026-06-16:3058, 2026-07-06:2156"
+price_missing_pct,10.2
+price_from_90night_quote_pct,22.3
+price_lt_30_count,337
+price_gt_3000_count,21
+bedrooms_missing_pct,12.9
+reviews_ltm_zero_pct,32.7
+est_occupancy_cap_nights,255
+listings_at_occ_cap,759
+entire_min30plus_pct,27.4
+no_licence_text_pct,17.5
+outside_city_polygons,0
+ia_neighbourhood_labels,23

@@ -1,0 +1,7 @@
+pandas>=2.2
+numpy
+scipy
+shapely>=2
+pyyaml
+matplotlib
+lxml

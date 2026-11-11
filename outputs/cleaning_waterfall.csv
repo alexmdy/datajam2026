@@ -1,0 +1,10 @@
+step,listings
+All listings (snapshot 2026-06-15),6509
+Entire home/apt only (DDD buys whole units),5322
+Nightly STRs (min nights < 30; drops monthly rentals),3857
+Active: reviewed in last 12 months,3285
+Full-year operators: first review >12 months ago,2023
+Shows a City licence number (compliant comparables),1910
+Usable nightly price (quote of <=7 nights),1856
+"Price outliers removed (<$60 or >$1,500/night)",1809
+Inside a City local-area polygon,1809

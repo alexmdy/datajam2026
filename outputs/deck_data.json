@@ -1,0 +1,409 @@
+{
+ "k": {
+  "raw_listings": 6509.0,
+  "comparables_final": 1809.0,
+  "pct_prices_from_90night_quotes": 22.3,
+  "pct_entire_homes_min30": 27.4,
+  "listings_at_occupancy_cap": 759.0,
+  "match_night_premium": 0.0582,
+  "match_premium_ci": "0.030-0.090",
+  "mar_over_jun_price": 0.7213,
+  "annual_adr_factor": 0.9142,
+  "may_oct_revenue_share": 0.7332,
+  "rev_bridge_ia": 64764.0,
+  "rev_bridge_str": 56995.0,
+  "rev_bridge_hybrid": 67025.0,
+  "condo_yield_str": -0.014,
+  "condo_yield_hybrid": 0.042,
+  "condo_yield_no_vacancy_tax": 0.024,
+  "house_yield_str": -0.031,
+  "house_yield_hybrid": 0.02,
+  "condo_vacancy_taxes_median": 28280.0,
+  "downtown_price": 707000.0,
+  "downtown_capital": 748382.0,
+  "downtown_n": 475.0,
+  "downtown_adr": 417.3049,
+  "downtown_nights": 156.0,
+  "downtown_yield_hybrid": 0.0464,
+  "downtown_ci": "0.045-0.048",
+  "ltr_benchmark_yield": 0.0193,
+  "B_units": 12.0,
+  "B_capital": 8981000.0,
+  "B_noi_p10": 282707.1235,
+  "B_noi_p50": 369091.9658,
+  "B_noi_p90": 475322.6257,
+  "B_p10": 0.0313,
+  "B_p50": 0.0411,
+  "B_p90": 0.0531,
+  "B_yield_on_10m": 0.0369,
+  "A_p50": 0.0267,
+  "A_prob_below_2": 0.1583,
+  "C_p50": 0.0383,
+  "B_spread": 0.0218,
+  "C_spread": 0.0205,
+  "fail6_yield": -0.0081,
+  "value_check_range": "-0.020 to +0.045",
+  "occ_calendar_spearman": 0.0549,
+  "split_half_spearman": 0.75,
+  "city_vacancy_2024": 1.5549,
+  "city_vacancy_2025": 2.7395,
+  "licence_share_active": 0.8922,
+  "downtown_1br_share": 0.6
+ },
+ "waterfall": [
+  [
+   "All listings (snapshot 2026-06-15)",
+   6509
+  ],
+  [
+   "Entire home/apt only (DDD buys whole units)",
+   5322
+  ],
+  [
+   "Nightly STRs (min nights < 30; drops monthly rentals)",
+   3857
+  ],
+  [
+   "Active: reviewed in last 12 months",
+   3285
+  ],
+  [
+   "Full-year operators: first review >12 months ago",
+   2023
+  ],
+  [
+   "Shows a City licence number (compliant comparables)",
+   1910
+  ],
+  [
+   "Usable nightly price (quote of <=7 nights)",
+   1856
+  ],
+  [
+   "Price outliers removed (<$60 or >$1,500/night)",
+   1809
+  ],
+  [
+   "Inside a City local-area polygon",
+   1809
+  ]
+ ],
+ "opmodel": {
+  "condo": [
+   -0.014,
+   0.042,
+   0.0193
+  ],
+  "house": [
+   -0.031,
+   0.02
+  ]
+ },
+ "season": [
+  0.0246,
+  0.0312,
+  0.0417,
+  0.0533,
+  0.1026,
+  0.1178,
+  0.1473,
+  0.154,
+  0.1333,
+  0.0782,
+  0.0538,
+  0.0621
+ ],
+ "bridge": [
+  64764.0,
+  62344.0,
+  56995.0,
+  67025.0
+ ],
+ "areas": [
+  [
+   "condo_1-2br",
+   "Downtown",
+   475,
+   707000.0,
+   0.0464,
+   0.0446,
+   0.0483,
+   -0.0072
+  ],
+  [
+   "condo_1-2br",
+   "Strathcona",
+   60,
+   690000.0,
+   0.0381,
+   0.0339,
+   0.0414,
+   -0.0152
+  ],
+  [
+   "condo_1-2br",
+   "West End",
+   33,
+   750000.0,
+   0.0367,
+   0.0275,
+   0.0482,
+   -0.0202
+  ],
+  [
+   "house_3br+",
+   "Hastings-Sunrise",
+   21,
+   1549000.0,
+   0.0342,
+   0.023,
+   0.0462,
+   -0.0147
+  ],
+  [
+   "condo_1-2br",
+   "Mount Pleasant",
+   47,
+   683000.0,
+   0.032,
+   0.0279,
+   0.0347,
+   -0.024
+  ],
+  [
+   "condo_1-2br",
+   "Kitsilano",
+   30,
+   874000.0,
+   0.0284,
+   0.0238,
+   0.0309,
+   -0.0283
+  ],
+  [
+   "house_3br+",
+   "Kensington-Cedar Cottage",
+   29,
+   1676000.0,
+   0.0244,
+   0.0206,
+   0.0255,
+   -0.0269
+  ]
+ ],
+ "portfolio": [
+  [
+   "A. Few high-value: detached houses",
+   5,
+   8497000.0,
+   "3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house)",
+   0.0183,
+   0.0267,
+   0.037,
+   0.1583
+  ],
+  [
+   "B. Many modest: condos, Downtown only",
+   12,
+   8981000.0,
+   "12x Downtown (condo)",
+   0.0313,
+   0.0411,
+   0.0531,
+   0.0012
+  ],
+  [
+   "C. Many modest: condos, Downtown + West End + Strathcona",
+   12,
+   9034000.0,
+   "8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo)",
+   0.029,
+   0.0383,
+   0.0496,
+   0.0022
+  ],
+  [
+   "D. Barbell: 1 house + condos",
+   11,
+   9131000.0,
+   "10x Downtown (condo); 1x Hastings-Sunrise (house)",
+   0.0296,
+   0.0394,
+   0.0509,
+   0.0021
+  ]
+ ],
+ "tornado": [
+  [
+   "Nightly rate (ADR) -10% / +10%",
+   0.0381,
+   0.0454,
+   0.0417
+  ],
+  [
+   "Occupancy -10% / +10%",
+   0.0381,
+   0.0454,
+   0.0417
+  ],
+  [
+   "Furnished monthly rent: 70% / 100% of lower-quartile ask",
+   0.0373,
+   0.0462,
+   0.0417
+  ],
+  [
+   "Purchase price +5% / -5%",
+   0.0396,
+   0.0441,
+   0.0417
+  ],
+  [
+   "Management 25% / 15%",
+   0.0386,
+   0.0448,
+   0.0417
+  ],
+  [
+   "Strata fee $650 / $400 per month",
+   0.0393,
+   0.0433,
+   0.0417
+  ],
+  [
+   "6-month 30-day test FAILED (STR all year + EHT + SVT)",
+   -0.0081,
+   0.0417,
+   0.0417
+  ]
+ ],
+ "vacancy": [
+  [
+   "City of Vancouver 2023",
+   0.8023
+  ],
+  [
+   "City of Vancouver 2024",
+   1.5549
+  ],
+  [
+   "City of Vancouver 2025",
+   2.7395
+  ],
+  [
+   "North Burnaby 2025",
+   5.6
+  ],
+  [
+   "New Westminster 2025",
+   5.8
+  ],
+  [
+   "Surrey 2025",
+   4.3
+  ],
+  [
+   "Richmond 2025",
+   3.1
+  ]
+ ],
+ "value_check": [
+  [
+   "Apartment",
+   "Vancouver West",
+   781000.0,
+   779200,
+   0.002
+  ],
+  [
+   "Apartment",
+   "Vancouver East",
+   666000.0,
+   637300,
+   0.045
+  ],
+  [
+   "Detached",
+   "Vancouver West",
+   2982000.0,
+   3042100,
+   -0.02
+  ],
+  [
+   "Detached",
+   "Vancouver East",
+   1719000.0,
+   1659400,
+   0.036
+  ]
+ ],
+ "event_check": [
+  [
+   "Downtown",
+   422,
+   67166.171,
+   70894.735,
+   1.0,
+   2.0,
+   1.333
+  ],
+  [
+   "West End",
+   29,
+   61660.504,
+   72146.647,
+   2.0,
+   1.0,
+   1.378
+  ],
+  [
+   "Strathcona",
+   56,
+   55536.739,
+   53659.678,
+   3.0,
+   4.0,
+   1.346
+  ],
+  [
+   "Mount Pleasant",
+   37,
+   44868.127,
+   53519.989,
+   4.0,
+   5.0,
+   1.386
+  ],
+  [
+   "Kitsilano",
+   26,
+   42678.1,
+   62628.617,
+   5.0,
+   3.0,
+   1.355
+  ]
+ ],
+ "mtr": [
+  [
+   1.0,
+   3877.36,
+   615.0
+  ],
+  [
+   2.0,
+   5145.7,
+   349.0
+  ],
+  [
+   3.0,
+   6556.0725,
+   58.0
+  ],
+  [
+   4.0,
+   8919.375,
+   19.0
+  ]
+ ]
+}

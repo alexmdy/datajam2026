@@ -1,0 +1,11 @@
+,value
+matched_listings,1965.0
+match_stays,1062.0
+nonmatch_stays,903.0
+match_night_premium,0.0582
+match_premium_ci_lo,0.0302
+match_premium_ci_hi,0.0897
+mar_over_jun_price,0.7213
+beta,0.5591
+annual_adr_factor,0.9142
+peak_may_oct_revenue_share,0.7332

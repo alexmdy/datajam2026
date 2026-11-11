@@ -1,0 +1,28 @@
+# Every cost/tax assumption, with its source. Edit here; all scripts read this file.
+capital:
+  mandate_cad: 10000000
+  cash_reserve_pct: 0.03          # held back for opex shortfalls / repairs (assumption)
+  closing_costs_pct: 0.006        # legal, inspection, strata docs, title insurance (assumption)
+  furnishing_condo: 25000         # per unit, furnish + photography + setup (assumption)
+  furnishing_house: 60000
+  # BC Property Transfer Tax: 1% to $200k, 2% to $2M, 3% above $2M, +2% residential above $3M (gov.bc.ca)
+  ptt_brackets: [[200000, 0.01], [2000000, 0.02], [3000000, 0.03], [1000000000000, 0.05]]
+operating:
+  platform_fee_pct: 0.155         # Airbnb host-only fee, standard for Canadian hosts from late 2025
+  management_pct_str: 0.20        # professional co-host for nightly stays (assumption; DDD has no staff)
+  management_pct_mtr: 0.10        # placing 1-6 month furnished tenants (assumption)
+  maintenance_pct: 0.05           # of gross revenue, incl. furniture replacement (assumption)
+  utilities_internet_condo_month: 300
+  utilities_internet_house_month: 600
+  strata_fee_condo_month: 500     # typical 1-2BR Vancouver condo (assumption; not in any dataset used)
+  insurance_condo_year: 1800      # STR-endorsed condo policy (assumption)
+  insurance_house_year: 4500
+  city_str_licence_year: 1060     # median fee paid, 2025 STR licences (Vancouver Open Data business licences)
+  provincial_registration_year: 450  # BC STR registry, host not resident (gov.bc.ca)
+  property_tax_rate: 0.00336394   # City of Vancouver 2026 residential, all levies, per $ of assessed value
+taxes_if_not_rented_6_months_30day:
+  empty_homes_tax_pct: 0.03       # City of Vancouver Vacancy Tax By-law 11674 (3% for 2026)
+  svt_pct: 0.01                   # BC Speculation & Vacancy Tax, Canadian-owned from 2026 (4% foreign from 2027)
+revenue:
+  mtr_months: 6                   # hybrid: furnished stays of 30+ nights Nov-Apr
+  mtr_rent_quantile: 0.25         # lower quartile of Airbnb monthly-stay asks (conservative)

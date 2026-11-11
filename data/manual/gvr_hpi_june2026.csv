@@ -1,0 +1,7 @@
+property_type,gvr_area,benchmark_price_jun2026,one_year_change_pct,source
+Apartment,Vancouver West,779200,-5.6,"Greater Vancouver REALTORS, MLS HPI, Stats Package June 2026 (public PDF): https://www.gvrealtors.ca/content/dam/rebgv_org_content/monthly-market-reports/GVR-Stats-Package-June-2026.pdf"
+Apartment,Vancouver East,637300,-7.2,same
+Townhouse,Vancouver West,1351600,-5.4,same
+Townhouse,Vancouver East,1054900,-3.5,same
+Detached,Vancouver West,3042100,-9.2,same
+Detached,Vancouver East,1659400,-9.6,same

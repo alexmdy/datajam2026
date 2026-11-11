@@ -1,0 +1,5 @@
+type,area,our_median_mid2026,gvr_benchmark_jun2026,pct_diff
+Apartment,Vancouver West,781000.0,779200,0.002
+Apartment,Vancouver East,666000.0,637300,0.045
+Detached,Vancouver West,2982000.0,3042100,-0.02
+Detached,Vancouver East,1719000.0,1659400,0.036
