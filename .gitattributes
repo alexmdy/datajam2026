@@ -1,0 +1,6 @@
+# Normalize line endings so running the pipeline on Windows (CRLF) does not show every output as changed
+* text=auto
+*.gz binary
+*.png binary
+*.pptx binary
+*.zip binary
