@@ -82,7 +82,7 @@ lic.columns = [x.lstrip('﻿') for x in lic.columns]
 li = lic[(lic.folderyear.astype(str) == '26') & (lic.status == 'Issued')].groupby('localarea').size()
 act = C0[(C0.minimum_nights < 30) & (C0.last_review >= '2025-06-15')]
 comp = pd.DataFrame({'active_nightly_listings': act.groupby('local_area').size(),
-                     'share_showing_city_licence': act.groupby('local_area').apply(lambda d: (d.lic_cat == 'city_licence').mean()),
+                     'share_showing_city_licence': act.groupby('local_area').lic_cat.apply(lambda c: (c == 'city_licence').mean()),
                      'issued_2026_licences': li}).fillna(0)
 comp['licences_per_listing'] = comp.issued_2026_licences / comp.active_nightly_listings
 comp.round(3).to_csv(os.path.join(OUT, "validation_compliance_estimate.csv"))

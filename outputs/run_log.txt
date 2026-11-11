@@ -1,0 +1,242 @@
+
+===== 01_clean_listings.py =====
+raw shape (6509, 74)
+rows                                                                         6509
+unique_ids                                                                   6509
+scrape_dates                    2026-06-15:1295, 2026-06-16:3058, 2026-07-06:2156
+price_missing_pct                                                            10.2
+price_from_90night_quote_pct                                                 22.3
+price_lt_30_count                                                             337
+price_gt_3000_count                                                            21
+bedrooms_missing_pct                                                         12.9
+reviews_ltm_zero_pct                                                         32.7
+est_occupancy_cap_nights                                                      255
+listings_at_occ_cap                                                           759
+entire_min30plus_pct                                                         27.4
+no_licence_text_pct                                                          17.5
+outside_city_polygons                                                           0
+ia_neighbourhood_labels                                                        23
+                                                    step  listings
+0                     All listings (snapshot 2026-06-15)      6509
+1            Entire home/apt only (DDD buys whole units)      5322
+2  Nightly STRs (min nights < 30; drops monthly rentals)      3857
+3                     Active: reviewed in last 12 months      3285
+4       Full-year operators: first review >12 months ago      2023
+5    Shows a City licence number (compliant comparables)      1910
+6             Usable nightly price (quote of <=7 nights)      1856
+7         Price outliers removed (<$60 or >$1,500/night)      1809
+8                       Inside a City local-area polygon      1809
+segment
+condo_1-2br       706
+suite_or_other    456
+house_1-2br       365
+house_3br+        224
+condo_3br+         58
+Name: count, dtype: int64
+
+===== 02_seasonality.py =====
+matched listings 1965; match-night premium 0.058 (95% CI 0.030-0.090); Mar/Jun price 0.721
+beta 0.559; annual ADR = 0.914 x June non-match price; May-Oct share of STR revenue 0.733
+       night_share  adr_index_vs_june  revenue_share
+month                                               
+1            0.039              0.570          0.025
+2            0.046              0.621          0.031
+3            0.055              0.689          0.042
+4            0.065              0.752          0.053
+5            0.099              0.952          0.103
+6            0.108              1.000          0.118
+7            0.124              1.083          0.147
+8            0.128              1.101          0.154
+9            0.117              1.045          0.133
+10           0.083              0.863          0.078
+11           0.065              0.755          0.054
+12           0.071              0.795          0.062
+
+===== 03_property_values.py =====
+join rate 1.0
+              local_area  n_units  assessed_median  price_est_mid2026
+           Arbutus Ridge     1681        1105000.0          1043000.0
+                Downtown    39971         749000.0           707000.0
+       Dunbar-Southlands      589         947000.0           894000.0
+                Fairview    11863         884000.0           834000.0
+      Grandview-Woodland     4744         661050.0           613000.0
+        Hastings-Sunrise     1245         688400.0           639000.0
+Kensington-Cedar Cottage     4156         765000.0           710000.0
+              Kerrisdale     1428        1263500.0          1193000.0
+               Killarney     5605         788400.0           732000.0
+               Kitsilano    10487         926000.0           874000.0
+                 Marpole     5324         787000.0           743000.0
+          Mount Pleasant    12309         736300.0           683000.0
+                Oakridge     1978        1112500.0          1050000.0
+     Renfrew-Collingwood     6962         570000.0           529000.0
+              Riley Park     2511         930000.0           863000.0
+             Shaughnessy      449        1295000.0          1222000.0
+            South Cambie     2526         973000.0           919000.0
+              Strathcona     1563         743000.0           690000.0
+                  Sunset     1011         698000.0           648000.0
+     Victoria-Fraserview     1050         742766.5           689000.0
+                West End     9726         794000.0           750000.0
+         West Point Grey      882         980000.0           925000.0
+     type           area  our_median_mid2026  gvr_benchmark_jun2026  pct_diff
+Apartment Vancouver West            781000.0                 779200     0.002
+Apartment Vancouver East            666000.0                 637300     0.045
+ Detached Vancouver West           2982000.0                3042100    -0.020
+ Detached Vancouver East           1719000.0                1659400     0.036
+
+===== 04_economics.py =====
+MTR monthly rent (lower quartile ask): {1.0: 3877.0, 2.0: 5146.0, 3.0: 6556.0, 4.0: 8919.0}
+    segment               local_area   n     price  adr_2027  nights   rev_str  rev_hybrid  yield_str  yield_hybrid  yield_hybrid_ci90_lo  yield_hybrid_ci90_hi
+condo_1-2br                 Downtown 475  707000.0   417.305   156.0 64223.793   73143.013     -0.007         0.046                 0.045                 0.048
+condo_1-2br               Strathcona  60  690000.0   323.545   156.0 53341.004   62373.784     -0.015         0.038                 0.034                 0.041
+condo_1-2br                 West End  33  750000.0   411.606   132.0 49452.017   64740.957     -0.020         0.037                 0.027                 0.048
+condo_1-2br           Mount Pleasant  47  683000.0   331.313   114.0 42260.723   54457.146     -0.024         0.032                 0.028                 0.035
+condo_1-2br                Kitsilano  30  874000.0   333.970   117.0 41721.741   57366.243     -0.028         0.028                 0.024                 0.031
+ house_3br+         Hastings-Sunrise  21 1549000.0   612.727   156.0 94530.566  108646.246     -0.015         0.034                 0.023                 0.046
+ house_3br+ Kensington-Cedar Cottage  29 1676000.0   544.406   102.0 64056.893   86615.355     -0.027         0.024                 0.021                 0.025
+IA-style revenue (June quote x nights)          64764.0
+after World Cup premium removed                 62344.0
+after seasonal ADR (2027 base, STR-only)        56995.0
+hybrid: May-Oct nightly + 6 months furnished    67025.0
+dtype: float64
+segment                   condo_1-2br   house_3br+
+price                      707000.000  1838000.000
+capital                    748382.000  1943788.000
+rev_str                     56995.329    64267.600
+rev_hybrid                  67025.410    88340.197
+vacancy_taxes               28280.000    73520.000
+noi_str                    -10272.806   -64949.696
+noi_hybrid                  31078.404    43414.091
+yield_str                      -0.014       -0.031
+yield_hybrid                    0.042        0.020
+yield_str_no_vacancy_tax        0.024        0.007
+yield_hybrid_naive              0.046        0.021
+
+===== 05_portfolio.py =====
+                                                  option  units  capital_deployed                                                              mix     noi_p10     noi_p50     noi_p90  yield_p10  yield_p50  yield_p90  spread_p90_p10  prob_yield_below_2pct  yield_on_10m_p50
+                      A. Few high-value: detached houses      5         8497000.0 3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house) 155694.9882 226568.5858 313338.5881     0.0183     0.0267     0.0369          0.0186                 0.1596            0.0227
+                   B. Many modest: condos, Downtown only     12         8981000.0                                             12x Downtown (condo) 282131.1235 368515.9658 474746.6257     0.0312     0.0411     0.0530          0.0218                 0.0013            0.0369
+C. Many modest: condos, Downtown + West End + Strathcona     12         9034000.0  8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo) 261964.0550 345503.2157 444505.5472     0.0289     0.0382     0.0495          0.0205                 0.0023            0.0346
+                            D. Barbell: 1 house + condos     11         9131000.0                10x Downtown (condo); 1x Hastings-Sunrise (house) 269725.6072 358117.3832 462583.8740     0.0295     0.0393     0.0508          0.0213                 0.0023            0.0358
+
+===== 06_validation.py =====
+                  n  rev_str_june_based  rev_str_march_based  rank_june  rank_march  june_over_march_price
+local_area                                                                                                
+Downtown        422            67166.17             70894.74        1.0         2.0                   1.33
+West End         29            61660.50             72146.65        2.0         1.0                   1.38
+Strathcona       56            55536.74             53659.68        3.0         4.0                   1.35
+Mount Pleasant   37            44868.13             53519.99        4.0         5.0                   1.39
+Kitsilano        26            42678.10             62628.62        5.0         3.0                   1.35
+occ_vs_calendar_spearman                             0.0549
+occ_vs_calendar_n                                  930.0000
+median_est_occupancy_pct                             0.3945
+median_calendar_unavailable_next90d                  0.5949
+share_at_255_night_cap                               0.1710
+share_est_occ_below_calendar_upper_bound             0.6968
+split_half_spearman_median                           0.7500
+split_half_spearman_p10                              0.4643
+downtown_condo_median_rev_str                    64223.7933
+ltr_rent_condo_month                              2614.0000
+ltr_rent_house_month                              4860.0000
+ltr_benchmark_yield                                  0.0253
+ltr_benchmark_yield_house                            0.0229
+ltr_benchmark_yield_cmhc_downtown                    0.0193
+downtown_hybrid_median_yield                         0.0463
+downtown_str_only_median_yield                      -0.0072
+citywide_share_active_nightly_showing_licence        0.8922
+citywide_issued_2026_licences                     3893.0000
+citywide_active_nightly_listings                  3848.0000
+city_vacancy_2023                                    0.8000
+city_vacancy_2024                                    1.5000
+city_vacancy_2025                                    2.7000
+vacancy_2025_Burnaby                                 5.9000
+vacancy_2025_New Westminster                         5.8000
+vacancy_2025_Surrey                                  4.3000
+vacancy_2025_Richmond                                3.1000
+city_vacancy_2023_zone_weighted_check                0.8023
+city_vacancy_2024_zone_weighted_check                1.5549
+city_vacancy_2025_zone_weighted_check                2.7395
+city_str_licence_fee_2026_median                  1108.0000
+                                                  driver     low   high   base
+                          Nightly rate (ADR) -10% / +10%  0.0380 0.0453 0.0417
+                                   Occupancy -10% / +10%  0.0380 0.0453 0.0417
+Furnished monthly rent: 70% / 100% of lower-quartile ask  0.0372 0.0462 0.0417
+                                Purchase price +5% / -5%  0.0395 0.0440 0.0417
+                                    Management 25% / 15%  0.0386 0.0448 0.0417
+                        Strata fee $650 / $400 per month  0.0393 0.0433 0.0417
+   6-month 30-day test FAILED (STR all year + EHT + SVT) -0.0081 0.0417 0.0417
+furnished months on Airbnb: -0.46 pts
+            n  rev_str    adr  nights
+bedrooms                             
+1.0       285  60108.0  379.0   156.0
+2.0       190  73198.0  505.0   156.0
+
+===== 07_charts.py =====
+figures: ['fig_area_ranking.png', 'fig_operating_model.png', 'fig_optout.png', 'fig_portfolio_options.png', 'fig_revenue_bridge.png', 'fig_seasonality.png', 'fig_tornado.png']
+
+===== 08_key_numbers.py =====
+                             key            value                                                   produced_by
+                    raw_listings             6509                      01_clean_listings.py -> data_quality.csv
+               comparables_final             1809                                  01 -> cleaning_waterfall.csv
+  pct_prices_from_90night_quotes             22.3                                        01 -> data_quality.csv
+          pct_entire_homes_min30             27.4                                        01 -> data_quality.csv
+       listings_at_occupancy_cap              759                                        01 -> data_quality.csv
+             match_night_premium           0.0582                   02_seasonality.py -> seasonality_params.csv
+                match_premium_ci      0.030-0.090                                  02 -> seasonality_params.csv
+              mar_over_jun_price           0.7213                                                            02
+               annual_adr_factor           0.9142                                                            02
+           may_oct_revenue_share           0.7332                                                            02
+                   rev_bridge_ia          64764.0                         04_economics.py -> revenue_bridge.csv
+condo_yield_hybrid_naive_revenue            0.046                                     04 -> segment_summary.csv
+house_yield_hybrid_naive_revenue            0.021                                                            04
+                  rev_bridge_str          56995.0                                                            04
+               rev_bridge_hybrid          67025.0                                                            04
+                 condo_yield_str           -0.014                                     04 -> segment_summary.csv
+              condo_yield_hybrid            0.042                                                            04
+      condo_yield_no_vacancy_tax            0.024                                                            04
+                 house_yield_str           -0.031                                                            04
+              house_yield_hybrid             0.02                                                            04
+      condo_vacancy_taxes_median          28280.0                                                            04
+                  downtown_price         707000.0         03_property_values.py -> acquisition_cost_by_area.csv
+                downtown_capital         748382.0                                                            04
+                      downtown_n            475.0                                        04 -> area_ranking.csv
+                    downtown_adr         417.3049                                                            04
+                 downtown_nights            156.0                                                            04
+           downtown_yield_hybrid           0.0463                                                            04
+                     downtown_ci      0.044-0.048                                                            04
+             ltr_benchmark_yield           0.0253                    06_validation.py -> validation_summary.csv
+       ltr_benchmark_yield_house           0.0229                    06_validation.py -> validation_summary.csv
+            ltr_rent_condo_month           2614.0 06_validation.py (StatCan 46-10-0092-01, Q1 2026 asking rent)
+            ltr_rent_house_month           4860.0 06_validation.py (StatCan 46-10-0092-01, Q1 2026 asking rent)
+                         B_units               12                      05_portfolio.py -> portfolio_options.csv
+                       B_capital        8981000.0                                                            05
+                       B_noi_p10      282131.1235                                                            05
+                       B_noi_p50      368515.9658                                                            05
+                       B_noi_p90      474746.6257                                                            05
+                           B_p10           0.0312                                                            05
+                           B_p50           0.0411                                                            05
+                           B_p90            0.053                                                            05
+                  B_yield_on_10m           0.0369                                                            05
+                           A_p50           0.0267                                                            05
+                  A_prob_below_2           0.1596                                                            05
+                           C_p50           0.0382                                                            05
+                        B_spread           0.0218                                                            05
+                        C_spread           0.0205                                                            05
+                     fail6_yield          -0.0081                                         06 -> sensitivity.csv
+               value_check_range -0.020 to +0.045                                    03 -> value_validation.csv
+           occ_calendar_spearman           0.0549                                                            06
+             split_half_spearman             0.75                                                            06
+               city_vacancy_2023              0.8                         06 (CMHC HMIP 2.1.31.2, Vancouver CY)
+               city_vacancy_2024              1.5                         06 (CMHC HMIP 2.1.31.2, Vancouver CY)
+               city_vacancy_2025              2.7                         06 (CMHC HMIP 2.1.31.2, Vancouver CY)
+            burnaby_vacancy_2025              5.9                                                            06
+    new_westminster_vacancy_2025              5.8                                       06 (CMHC reliability d)
+             surrey_vacancy_2025              4.3                                                            06
+           richmond_vacancy_2025              3.1                                                            06
+            city_str_licence_fee           1108.0                06 (Vancouver Open Data, 2026 median fee paid)
+  furnished_on_airbnb_yield_cost           0.0046                            06 -> validation_furnished_fee.csv
+    reserve_years_of_vacancy_tax         3.002711       08 (reserve / 12 units x EHT+SVT on the Downtown price)
+            licence_share_active           0.8922                                                            06
+              downtown_1br_share              0.6                                06 -> downtown_by_bedrooms.csv
+
+===== 09_deck_data.py =====
+wrote deck_data.json

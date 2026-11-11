@@ -12,12 +12,15 @@ Data: Inside Airbnb, Vancouver, 15 June 2026, CC BY 4.0.
 pip install -r requirements.txt
 python run_all.py --download   # first run: downloads every public dataset, then runs 01–09
 python run_all.py              # later runs: recompute everything from data/raw
+python run_all.py --verbose    # same, but also show each step's full printout on screen
 PPTX_SKILL=<path to a folder containing scripts/apply_theme.js> node deck/build_deck.js   # draft deck from outputs/deck_data.json (needs the pptxgenjs npm package)
 ```
 
 `deck/DDD_DataJam2026_Pitch.pptx` is the submitted pitch. It started from `build_deck.js` and was then edited by hand (slides reordered: Where/what is slide 3, the operating model slide 4), so slide numbers in a fresh build differ; every number on it is in `outputs/key_numbers.csv`.
 
 Monte Carlo seeds are fixed, so every number reproduces exactly.
+
+**What you see when it runs:** one progress line per step, then a summary of every pitch number grouped the way the pitch tells the story (recommendation, data and cleaning, area ranking, decisions D1-D4, risks, validation, assumptions). Each group has a heading saying what the numbers mean, the slides that use them and the output file they come from. The summary is also saved to `outputs/report.txt`; each step's full printout is in `outputs/run_log.txt`.
 
 **Privacy:** the Inside Airbnb files in `data/raw/` are stored *sanitized* (`src/ia_sanitize.py`, applied automatically by `00_download.py`): no host names, listing URLs, host profiles, licence numbers or reviewer names/text are kept. The licence text is replaced by its category (`license_category`: city_licence / exempt / other_text / none), which is all the analysis uses. The original detailed listings file has 90 columns; the stored copy keeps 74.
 
@@ -37,6 +40,7 @@ Monte Carlo seeds are fixed, so every number reproduces exactly.
 | `src/07_charts.py` | Static PNG figures (for the README / backup) | `outputs/figures/` |
 | `src/08_key_numbers.py` | **Every number quoted in the pitch, with the script that produced it** | `outputs/key_numbers.csv` |
 | `src/09_deck_data.py` | Exports what the deck displays | `outputs/deck_data.json` |
+| `src/10_report.py` | Readable summary of every pitch number, with headings explaining each group (reads 01-09 outputs only) | `outputs/report.txt` |
 
 All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR benchmark figures (transcribed from the public June 2026 stats package PDF, whose site blocks scripted download) are in `data/manual/gvr_hpi_june2026.csv`.
 

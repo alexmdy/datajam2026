@@ -16,6 +16,7 @@ bd = pd.read_csv(r("downtown_by_bedrooms.csv"), index_col=0)
 ff = pd.read_csv(r("validation_furnished_fee.csv"), index_col=0)['value']
 dt = ar.loc[('condo_1-2br', 'Downtown')]
 B = po.loc['B']
+VT = load_assumptions()['taxes_if_not_rented_6_months_30day']
 K = [
  ("raw_listings", dq['rows'], "01_clean_listings.py -> data_quality.csv"),
  ("comparables_final", wf.listings.iloc[-1], "01 -> cleaning_waterfall.csv"),
@@ -54,6 +55,7 @@ K = [
  ("surrey_vacancy_2025", vs['vacancy_2025_Surrey'], "06"), ("richmond_vacancy_2025", vs['vacancy_2025_Richmond'], "06"),
  ("city_str_licence_fee", vs['city_str_licence_fee_2026_median'], "06 (Vancouver Open Data, 2026 median fee paid)"),
  ("furnished_on_airbnb_yield_cost", ff['furnished_on_airbnb_yield_cost'], "06 -> validation_furnished_fee.csv"),
+ ("reserve_years_of_vacancy_tax", (10e6 - B.capital_deployed) / (B.units * dt.price * (VT['empty_homes_tax_pct'] + VT['svt_pct'])), "08 (reserve / 12 units x EHT+SVT on the Downtown price)"),
  ("licence_share_active", vs['citywide_share_active_nightly_showing_licence'], "06"),
  ("downtown_1br_share", bd.loc[1.0, 'n'] / bd.n.sum(), "06 -> downtown_by_bedrooms.csv"),
 ]

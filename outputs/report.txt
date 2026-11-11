@@ -1,0 +1,273 @@
+============================================================================================
+ DDD x DataJam 2026 -- RESULTS OF run_all.py
+ Every number below comes from outputs/key_numbers.csv or the output file it names.
+ Yields = 2027 net operating income / all-in capital (price + transfer tax + closing + furnishing).
+============================================================================================
+
+============================================================================================
+ 1. THE RECOMMENDATION   (pitch: slides 1, 6, 8)
+============================================================================================
+  What DDD should buy and what it should earn in 2027. Ranges are P10-P90 across 10,000
+  simulated versions of 2027 (P10 = a bad year, P90 = a good year). [portfolio_options.csv]
+  ------------------------------------------------------------------------------------------
+    Condos to buy (Downtown, 1-2 bedroom) .............. 12
+        Run nightly May-Oct, furnished 30+ night stays Nov-Apr.
+    Share that should be 1-bedroom ..................... 60%
+        Mirrors the Downtown comparables (rest are 2-bedroom).
+    Capital deployed (all-in) .......................... $8,981,000   (pitch: $9.0M)
+        Price + property transfer tax + closing + furnishing for all 12 units.
+    Cash kept in reserve ............................... $1,019,000   (pitch: $1.0M)
+        Covers about 3.0 years of the vacancy taxes if the 6-month test fails.
+    Expected 2027 net operating income (P50) ........... $368,516   (pitch: $370k)
+        Median simulated year.
+      NOI range (P10 - P90) ............................ $282,131 - $474,747   (pitch: $280k-$470k)
+    Expected 2027 net yield on capital deployed ........ 4.1%
+        The headline return number.
+      Yield range (P10 - P90) .......................... 3.1% - 5.3%
+    Yield on the full $10M (reserve earns nothing) ..... 3.7%
+
+============================================================================================
+ 2. DATA AND CLEANING   (pitch: slides 2, 13)
+============================================================================================
+  How the 15 June 2026 Inside Airbnb snapshot was cut down to listings a compliant,
+  professionally run DDD unit would compete with. [cleaning_waterfall.csv, data_quality.csv]
+  ------------------------------------------------------------------------------------------
+
+  > Cleaning waterfall: listings left after each filter
+      filter                                                 left  removed
+      -----------------------------------------------------  ----  -------
+      All listings (snapshot 2026-06-15)                     6509        0
+      Entire home/apt only (DDD buys whole units)            5322     1187
+      Nightly STRs (min nights < 30; drops monthly rentals)  3857     1465
+      Active: reviewed in last 12 months                     3285      572
+      Full-year operators: first review >12 months ago       2023     1262
+      Shows a City licence number (compliant comparables)    1910      113
+      Usable nightly price (quote of <=7 nights)             1856       54
+      Price outliers removed (<$60 or >$1,500/night)         1809       47
+      Inside a City local-area polygon                       1809        0
+
+  > Data-quality checks
+    Listings in the snapshot / unique ids .............. 6509 / 6509
+        Equal, so no duplicate listings.
+    Days the scrape ran (listings per day) ............. Jun 15: 1295  Jun 16: 3058  Jul 06: 2156
+        One snapshot, crawled over three days.
+    Prices missing ..................................... 10.2%
+    Prices that are long-stay quotes (28+ nights) ...... 22.3%
+        Mostly 90-night quotes, which make nightly 'prices' look tiny; only quotes of 7
+        nights or fewer are kept.
+    Prices under $30 / over $3,000 ..................... 337 / 21
+    Entire homes requiring 30+ nights .................. 27.4%
+        Monthly rentals, not short-term rentals; dropped.
+    Listings at the 255-night occupancy cap ............ 759
+        Inside Airbnb caps its occupancy estimate at 255 nights.
+    Listings with no licence text ...................... 17.5%
+    Bedrooms missing ................................... 12.9%
+        Treated as 1 bedroom.
+    Inside Airbnb neighbourhood labels vs City areas ... 23 vs 22
+        Every listing re-assigned to an official local area by its coordinates.
+    Listings outside every City local area ............. 0
+
+============================================================================================
+ 3. WHERE AND WHAT: AREA RANKING   (pitch: slide 3)
+============================================================================================
+  Median 2027 yield of each area's comparables under the seasonal hybrid, for areas with 20+
+  comparables, with a 90% bootstrap confidence interval. Higher and tighter is better.
+  [area_ranking.csv]
+  ------------------------------------------------------------------------------------------
+      area                             type    n  purchase  nightly rate  nights/yr  yield     90% CI
+      ------------------------  -----------  ---  --------  ------------  ---------  -----  ---------
+      Downtown                  condo 1-2BR  475     $707k          $417        156   4.6%  4.5%-4.8%
+      Strathcona                condo 1-2BR   60     $690k          $324        156   3.8%  3.4%-4.1%
+      West End                  condo 1-2BR   33     $750k          $412        132   3.7%  2.7%-4.8%
+      Hastings-Sunrise           house 3BR+   21   $1,549k          $613        156   3.4%  2.3%-4.6%
+      Mount Pleasant            condo 1-2BR   47     $683k          $331        114   3.2%  2.8%-3.5%
+      Kitsilano                 condo 1-2BR   30     $874k          $334        117   2.8%  2.4%-3.1%
+      Kensington-Cedar Cottage   house 3BR+   29   $1,676k          $544        102   2.4%  2.1%-2.5%
+      n = comparables; purchase = 2026 assessed median rolled to mid-2026 with GVR;
+      nightly rate = 2027 seasonal average; nights = median estimated nights booked per
+      year.
+
+  > Downtown condo, the recommended unit
+    Comparables ........................................ 475
+    Purchase price (2026 assessments, GVR-adjusted) .... $707,000
+    All-in capital per unit ............................ $748,382
+        Adds BC property transfer tax, 0.6% closing and $25k furnishing.
+    Median nightly rate x nights booked ................ $417 x 156
+    Median hybrid yield (90% CI) ....................... 4.6% (4.5%-4.8%)
+
+  > World Cup test: does Downtown still lead on March (pre-tournament) prices?
+      area              n  rank on June prices  rank on March prices  June / March price
+      --------------  ---  -------------------  --------------------  ------------------
+      Downtown        422                    1                     2                1.33
+      West End         29                    2                     1                1.38
+      Strathcona       56                    3                     4                1.35
+      Mount Pleasant   37                    4                     5                1.39
+      Kitsilano        26                    5                     3                1.35
+      Downtown's June/March jump is no bigger than other areas', and it stays top two on
+      March prices: its lead is not a World Cup effect.
+      [validation_downtown_event_check.csv]
+
+============================================================================================
+ 4. DECISION 1 - OPERATING MODEL   (pitch: slides 4, 9)
+============================================================================================
+  A unit not lived in or rented for 6 months in 30+ day stays is 'vacant' and pays the 3%
+  Empty Homes Tax + 1% SVT. Compares nightly all year, the seasonal hybrid and a plain
+  long-term rental. [segment_summary.csv, validation_summary.csv]
+  ------------------------------------------------------------------------------------------
+
+  > Median 2027 yield by operating model
+      property     nightly all year  seasonal hybrid (plan)  long-term rental
+      -----------  ----------------  ----------------------  ----------------
+      1-2BR condo             -1.4%                    4.2%              2.5%
+      3BR+ house              -3.1%                    2.0%              2.3%
+    Vacancy taxes/yr, nightly all year (median condo) .. $28,280
+        3% Empty Homes Tax + 1% SVT on the assessed value.
+    Condo nightly all year with no vacancy tax ......... 2.4%
+        Shows the taxes are what make nightly-only lose money.
+    Share of nightly revenue earned May-Oct ............ 73%
+        So Nov-Apr is only the remainder: the cheap months to give up.
+    Long-term rent used, condo / house (per month) ..... $2,614 / $4,860
+        Statistics Canada 46-10-0092-01, average asking rent, Vancouver CMA, Q1 2026.
+
+  > Month by month, median Downtown condo: net income after fees
+      month  nightly guests  furnished 30+ nights     better       plan
+      -----  --------------  --------------------  ---------  ---------
+      Jan              $940                $3,296  furnished  furnished
+      Feb            $1,192                $3,296  furnished  furnished
+      Mar            $1,593                $3,296  furnished  furnished
+      Apr            $2,037                $3,296  furnished  furnished
+      May            $3,921                $3,296    nightly    nightly
+      Jun            $4,502                $3,296    nightly    nightly
+      Jul            $5,629                $3,296    nightly    nightly
+      Aug            $5,885                $3,296    nightly    nightly
+      Sep            $5,094                $3,296    nightly    nightly
+      Oct            $2,988                $3,296  furnished    nightly
+      Nov            $2,056                $3,296  furnished  furnished
+      Dec            $2,373                $3,296  furnished  furnished
+      Furnished rent is the lower-quartile 1BR monthly ask, flat (no monthly data).
+      October is close and the furnished figure is an asking rent, so October stays
+      nightly. [deck_data.json]
+    Furnished monthly ask used, 1BR / 2BR .............. $3,877 / $5,146
+        Lower quartile of Airbnb monthly-stay asks. [mtr_rent_by_bedrooms.csv]
+
+============================================================================================
+ 5. DECISION 2 - REVENUE BASE   (pitch: slides 5, 9)
+============================================================================================
+  Inside Airbnb's revenue estimate = one June price quote x nights. Three corrections turn
+  it into a normal-year 2027 figure. [seasonality_params.csv, revenue_bridge.csv]
+  ------------------------------------------------------------------------------------------
+    World Cup match-night premium removed .............. 5.8%
+        95% CI 3.0%-9.0%; each listing's March price is the control.
+    Late-March price as a share of June price .......... 72%
+        Same listings, so this is seasonality, not mix.
+    Annual average nightly rate = this x June price .... 0.91
+
+  > Revenue bridge, median condo comparable (per year)
+      step                                          revenue
+      --------------------------------------------  -------
+      IA-style revenue (June quote x nights)        $64,764
+      after World Cup premium removed               $62,344
+      after seasonal ADR (2027 base, STR-only)      $56,995
+      hybrid: May-Oct nightly + 6 months furnished  $67,025
+    Inside Airbnb method -> corrected nightly-only ..... -12%
+    Condo hybrid yield, naive vs corrected revenue ..... 4.6% vs 4.2%
+        What D2 changed: without the corrections every yield would look about half a point
+        better.
+
+============================================================================================
+ 6. DECISION 3 - FEW HIGH-VALUE VS MANY MODEST   (pitch: slides 7, 10)
+============================================================================================
+  10,000 simulated 2027s per portfolio. Each unit draws a real comparable; all units share
+  market shocks (rate, occupancy, furnished rent, ramp-up, price paid).
+  [portfolio_options.csv]
+  ------------------------------------------------------------------------------------------
+      portfolio      units  capital   P10   P50   P90  P90-P10 spread  chance < 2%
+      -------------  -----  -------  ----  ----  ----  --------------  -----------
+      A. High-value      5   $8.50M  1.8%  2.7%  3.7%         1.9 pts        16.0%
+      B. Modest         12   $8.98M  3.1%  4.1%  5.3%         2.2 pts         0.1%
+      C. Modest         12   $9.03M  2.9%  3.8%  5.0%         2.1 pts         0.2%
+      D. Barbell        11   $9.13M  2.9%  3.9%  5.1%         2.1 pts         0.2%
+      A: 3x Hastings-Sunrise (house); 2x Kensington-Cedar Cottage (house)
+      B: 12x Downtown (condo)
+      C: 8x Downtown (condo); 2x West End (condo); 2x Strathcona (condo)
+      D: 10x Downtown (condo); 1x Hastings-Sunrise (house)
+    3-area mix vs Downtown only: median change ......... -0.3 pts
+        Spread 2.1 vs 2.2 pts: spreading across areas barely cuts risk, because 2027 risk
+        is market-wide.
+
+============================================================================================
+ 7. RISKS AND SENSITIVITY   (pitch: slides 6, 11, 12)
+============================================================================================
+  What moves the recommended portfolio's expected yield, one assumption at a time (base =
+  deterministic expected yield, slightly above the simulated P50). [sensitivity.csv]
+  ------------------------------------------------------------------------------------------
+      what changes                                              low case  high case  base
+      --------------------------------------------------------  --------  ---------  ----
+      Nightly rate (ADR) -10% / +10%                                3.8%       4.5%  4.2%
+      Occupancy -10% / +10%                                         3.8%       4.5%  4.2%
+      Furnished monthly rent: 70% / 100% of lower-quartile ask      3.7%       4.6%  4.2%
+      Purchase price +5% / -5%                                      4.0%       4.4%  4.2%
+      Management 25% / 15%                                          3.9%       4.5%  4.2%
+      Strata fee $650 / $400 per month                              3.9%       4.3%  4.2%
+      6-month 30-day test FAILED (STR all year + EHT + SVT)        -0.8%       4.2%  4.2%
+    Yield if the 6-month furnished-stay test fails ..... -0.8%
+        Nightly all year plus both vacancy taxes: the risk that matters most.
+    Cost of listing the furnished months on Airbnb ..... -0.5 pts
+        The base case leases them directly; Airbnb's 15.5% fee would apply otherwise.
+
+============================================================================================
+ 8. DECISION 4 - SCOPE AND THE OPT-OUT TEST   (pitch: slides 10, 14)
+============================================================================================
+  A city can opt out of the principal-residence rule after two years at 3%+ rental vacancy.
+  Rates are CMHC's published city rates (HMIP table 2.1.31.2). [validation_summary.csv]
+  ------------------------------------------------------------------------------------------
+    City of Vancouver vacancy 2023 / 2024 / 2025 ....... 0.8% / 1.5% / 2.7%
+        Under 3%, so no Vancouver opt-out before June 2028: no surge of new competing
+        listings in 2027.
+    2025 vacancy: Burnaby / New Westminster ............ 5.9% / 5.8%
+        New Westminster's estimate is CMHC grade d (use with caution).
+    2025 vacancy: Surrey / Richmond .................... 4.3% / 3.1%
+        Already at 3%+; if 2026 also clears 3% they could opt out from June 1, 2027.
+
+============================================================================================
+ 9. VALIDATION   (pitch: slide 12)
+============================================================================================
+  Checks that the inputs and the ranking hold up. [value_validation.csv,
+  validation_summary.csv]
+  ------------------------------------------------------------------------------------------
+
+  > Our purchase-price proxy vs GVR's independent June 2026 benchmark
+      type                 area        ours         GVR  difference
+      ---------  --------------  ----------  ----------  ----------
+      Apartment  Vancouver West    $781,000    $779,200       +0.2%
+      Apartment  Vancouver East    $666,000    $637,300       +4.5%
+      Detached   Vancouver West  $2,982,000  $3,042,100       -2.0%
+      Detached   Vancouver East  $1,719,000  $1,659,400       +3.6%
+    Area ranking stability (split-half Spearman) ....... 0.75
+        1 = identical ranking in two random halves of the data; 300 splits.
+    Review-based occupancy vs forward calendar ......... 0.05
+        Near zero: the calendar mixes bookings and owner blocks, so it cannot validate
+        occupancy (tested, did not hold).
+    Active nightly listings showing a City licence ..... 89%
+        An estimate: listings and licences are not counted on the same basis.
+
+============================================================================================
+ 10. KEY ASSUMPTIONS   (pitch: slide 11)
+============================================================================================
+  Cost and tax inputs, all in data/manual/assumptions.yaml.
+  ------------------------------------------------------------------------------------------
+    Airbnb host-only fee ............................... 15.5%
+    Management: nightly / furnished stays .............. 20% / 10% of revenue
+    Maintenance ........................................ 5% of revenue
+    Strata fee / utilities (per month, condo) .......... $500 / $300
+    Insurance (per year, condo) ........................ $1,800
+    Property tax rate (Vancouver 2026) ................. 0.336% of value
+    City STR licence / provincial registration ......... $1,108 / $450
+        Licence = median fee paid on 2026 City licences (checked against open data in
+        06_validation.py).
+    Closing costs / furnishing per condo ............... 0.6% / $25,000
+    Long-term rental: management / maintenance ......... 8% / 5%
+
+============================================================================================
+ Full step-by-step printout: outputs/run_log.txt     Every number with its source script: outputs/key_numbers.csv
+============================================================================================
