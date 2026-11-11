@@ -99,19 +99,19 @@ title(s, "Nightly rental all year loses money once vacancy taxes apply; a season
 badge(s, "D1");
 const om = D.opmodel;
 s.addChart(pres.charts.BAR, [
-  { name: "1-2BR condo", labels: ["Nightly all year", "Seasonal hybrid"], values: om.condo.slice(0, 2).map((v) => +(v * 100).toFixed(1)) },
-  { name: "3BR+ detached house", labels: ["Nightly all year", "Seasonal hybrid"], values: om.house.map((v) => +(v * 100).toFixed(1)) }],
-  Object.assign({}, AX, { x: 0.5, y: 1.15, w: 4.55, h: 3.2, barDir: "col", chartColors: [HEX.blue, HEX.grey], showValue: true, dataLabelPosition: "outEnd",
+  { name: "1-2BR condo", labels: ["Nightly all year", "Seasonal hybrid", "Long-term rental"], values: om.condo.map((v) => +(v * 100).toFixed(1)) }],
+  Object.assign({}, AX, { x: 0.5, y: 1.15, w: 4.55, h: 3.2, barDir: "col", chartColors: [HEX.blue], showValue: true, dataLabelPosition: "outEnd",
     dataLabelFormatCode: '0.0"%";-0.0"%";;', dataLabelColor: "0B1B2B", valAxisLabelFormatCode: '0"%"', valAxisMinVal: -4, valAxisMaxVal: 5, valAxisMajorUnit: 1,
-    showLegend: true, legendPos: "b", showTitle: true, title: "Median 2027 net yield by operating model", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 60 }));
+    showLegend: false, showTitle: true, title: "Median 2027 net yield by operating model, 1-2BR condo", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 60 }));
+const MC = D.month_compare;
 s.addChart(pres.charts.BAR, [
-  { name: "Nightly (May-Oct)", labels: "JFMAMJJASOND".split(""), values: D.season.map((v, i) => (i >= 4 && i <= 9 ? +(v * 100).toFixed(1) : 0)) },
-  { name: "Furnished 30+ nights", labels: "JFMAMJJASOND".split(""), values: D.season.map((v, i) => (i >= 4 && i <= 9 ? 0 : +(v * 100).toFixed(1))) }],
-  Object.assign({}, AX, { x: 5.25, y: 1.15, w: 4.25, h: 3.2, barDir: "col", barGrouping: "stacked", chartColors: [HEX.blue, HEX.grey], valAxisLabelFormatCode: '0"%"',
-    showLegend: true, legendPos: "b", showTitle: true, title: "Share of a year's nightly revenue by month", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 35 }));
+  { name: "Nightly, after fees", labels: "JFMAMJJASOND".split(""), values: MC.nightly.map((v) => Math.round(v)) },
+  { name: "Furnished 30+ nights, after fees", labels: "JFMAMJJASOND".split(""), values: MC.furnished.map((v) => Math.round(v)) }],
+  Object.assign({}, AX, { x: 5.25, y: 1.15, w: 4.25, h: 3.2, barDir: "col", chartColors: [HEX.blue, HEX.grey], valAxisLabelFormatCode: '$#,##0',
+    showLegend: true, legendPos: "b", showTitle: true, title: "Median Downtown condo: net income per month", titleFontSize: 11, titleColor: "0E2A47", barGapWidthPct: 40, barOverlapPct: 0 }));
 para(s, [{ text: `An investor-owned nightly rental counts as vacant: 3% Empty Homes Tax + 1% SVT, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Long-term rental of the same Downtown unit: ${pct(K.ltr_benchmark_yield)}.` }], { x: 0.5, y: 4.45, w: 4.55, h: 0.7, fontSize: 11.5 });
-para(s, [{ text: `Nov-Apr earns only ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue, so it is the cheap half of the year to hand to 30+ night stays, which exempts the unit from both taxes.` }], { x: 5.25, y: 4.45, w: 4.25, h: 0.7, fontSize: 11.5 });
-NOTES.push(`Decision one, the operating model. The simulation lets DDD skip the principal-residence rule, but not the taxes. A unit that is not lived in or rented for six months in stays of 30 days or more is "vacant" for the City's 3% Empty Homes Tax and the province's 1% Speculation and Vacancy Tax, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Run nightly all year, the median condo yields ${pct(K.condo_yield_str)}. The fix comes from seasonality: November to April is only ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue. Rent those months as furnished 30-plus-night stays and the unit is exempt. The hybrid yields ${pct(K.condo_yield_hybrid)} on condos, more than double a plain long-term rental at ${pct(K.ltr_benchmark_yield)}.`);
+para(s, [{ text: `After fees, a furnished stay beats nightly Nov-Apr; nightly wins May-Sep. October is close ($${(MC.nightly[9] / 1000).toFixed(1)}k vs $${(MC.furnished[9] / 1000).toFixed(1)}k, on an asking rent), so it stays nightly. Furnished rent shown flat: no monthly data.` }], { x: 5.25, y: 4.45, w: 4.25, h: 0.7, fontSize: 11.5 });
+NOTES.push(`Decision one, the operating model. The simulation lets DDD skip the principal-residence rule, but not the taxes. A unit that is not lived in or rented for six months in stays of 30 days or more is "vacant" for the City's 3% Empty Homes Tax and the province's 1% Speculation and Vacancy Tax, about ${k$(K.condo_vacancy_taxes_median)} a year on a median condo. Run nightly all year, the median condo yields ${pct(K.condo_yield_str)}. The fix comes from seasonality: November to April is only ${pct(1 - K.may_oct_revenue_share, 0)} of nightly revenue. Rent those months as furnished 30-plus-night stays and the unit is exempt. Month by month, after fees, the median Downtown condo earns more from a furnished stay than from nightly guests in every month from November to April, and less from May to September. October is nearly a tie, and since furnished rents are asking prices that our simulation discounts by up to 30 percent, we keep October nightly. The hybrid yields ${pct(K.condo_yield_hybrid)} on condos, more than double a plain long-term rental at ${pct(K.ltr_benchmark_yield)}.`);
 
 // ---------- 4. D2 revenue base ----------
 s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Pitch" });

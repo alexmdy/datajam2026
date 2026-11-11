@@ -24,5 +24,15 @@ d["vacancy"] = [[f"City of Vancouver {y}", vs[f'city_vacancy_{y}']] for y in (20
 d["value_check"] = pd.read_csv(r("value_validation.csv")).values.tolist()
 d["event_check"] = pd.read_csv(r("validation_downtown_event_check.csv")).values.tolist()
 d["mtr"] = pd.read_csv(r("mtr_rent_by_bedrooms.csv")).values.tolist()
+# Monthly net income, median Downtown 1-2BR condo comparable: nightly (after platform, co-host, maintenance)
+# vs a furnished 30+ night stay (after placement fee, maintenance). Furnished rent is flat: no monthly seasonality data.
+A = load_assumptions(); op = A['operating']
+U = pd.read_csv(os.path.join(PROC, "unit_economics.csv"), low_memory=False)
+dt = U[(U.segment == 'condo_1-2br') & (U.local_area == 'Downtown')]
+share = pd.read_csv(r("seasonality_monthly.csv"), index_col=0).revenue_share
+f_str = 1 - op['platform_fee_pct'] - op['management_pct_str'] - op['maintenance_pct']
+f_mtr = 1 - op['management_pct_mtr'] - op['maintenance_pct']
+d["month_compare"] = {"nightly": [float((dt.rev_str * share[m] * f_str).median()) for m in range(1, 13)],
+                      "furnished": [float((dt.mtr_rent * f_mtr).median())] * 12, "n": int(len(dt))}
 json.dump(d, open(r("deck_data.json"), "w"), indent=1, default=float)
 print("wrote deck_data.json")
