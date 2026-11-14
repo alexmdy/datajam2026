@@ -9,12 +9,19 @@ Data: Inside Airbnb, Vancouver, 15 June 2026, CC BY 4.0.
 ## Run it
 
 ```bash
-pip install -r requirements.txt
-python run_all.py --download   # first run: downloads every public dataset, then runs 01–10
-python run_all.py              # later runs: recompute everything from data/raw
-python run_all.py --verbose    # same, but also show each step's full printout on screen
+python run_all.py
+```
+
+That's it (Python 3.9 or newer). If a required package is missing, the first run creates a private environment in `.venv/`, installs `requirements.txt` there (1–3 minutes, internet needed once) and then runs; it never changes your own Python installation. Later runs start immediately. All the data is already in `data/raw/`, so nothing needs downloading.
+
+```bash
+python run_all.py --verbose     # also show each step's full printout on screen
+python run_all.py --fresh-env   # rebuild .venv/ from scratch first (to test the automatic setup)
+python run_all.py --download    # only if data/raw/ is missing: re-download every public dataset first
 PPTX_SKILL=<path to a folder containing scripts/apply_theme.js> node deck/build_deck.js   # draft deck from outputs/deck_data.json (needs the pptxgenjs npm package)
 ```
+
+Tested 14 Nov 2026: a fresh copy with no outputs, run from an empty Python environment, reproduces all 23 output files byte for byte, both with current package versions and with the oldest versions `requirements.txt` allows (pandas 2.2.0, numpy 1.26.4, scipy 1.11.4).
 
 `deck/DDD_DataJam2026_Pitch.pptx` is the submitted pitch. It started from `build_deck.js` and was then edited by hand (slides reordered: Where/what is slide 3, the operating model slide 4), so a fresh build differs in layout and wording; every number on the submitted deck is printed slide by slide by `run_all.py` (`outputs/report.txt`) and listed in `outputs/key_numbers.csv`.
 

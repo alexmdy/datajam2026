@@ -1,12 +1,53 @@
 """Reproduce every number and figure:  python run_all.py   (add --download on a fresh clone)
 
+No setup needed: if a required package is missing, the first run creates a private environment in .venv/,
+installs requirements.txt there (about 1-3 minutes, internet needed once) and continues. Later runs start at once.
 Runs the pipeline steps in order, shows one progress line per step, saves each step's full printout to
 outputs/run_log.txt, then prints a readable summary of every pitch number (also saved to outputs/report.txt).
   --download   first fetch all public data (only needed on a fresh clone)
   --verbose    also show each step's full printout on screen, as it runs
+  --fresh-env  rebuild .venv/ from scratch and run inside it (to test the automatic setup)
 """
-import subprocess, sys, os, time
+import subprocess, sys, os, time, shutil, importlib.util
 here = os.path.dirname(os.path.abspath(__file__))
+
+# ---------- 0. Python packages: set them up automatically on the first run ----------
+if sys.version_info < (3, 9):
+    sys.exit(f"Python 3.9 or newer is needed (this is {sys.version.split()[0]}). Install it from python.org and run again.")
+NEEDED = {"pandas": (2, 2), "numpy": None, "scipy": None, "shapely": (2, 0), "yaml": None, "matplotlib": None}
+def missing():
+    from importlib.metadata import version
+    out = []
+    for mod, minv in NEEDED.items():
+        if importlib.util.find_spec(mod) is None: out.append(mod); continue
+        if minv:
+            v = tuple(int(x) for x in version(mod).split(".")[:2])
+            if v < minv or (mod == "pandas" and v[0] >= 3): out.append(f"{mod} {version(mod)}")
+    return out
+fresh = "--fresh-env" in sys.argv
+if not os.environ.get("DJ26_IN_VENV") and (fresh or missing()):
+    venv = os.path.join(here, ".venv")
+    py = os.path.join(venv, "Scripts", "python.exe") if os.name == "nt" else os.path.join(venv, "bin", "python")
+    if fresh and os.path.isdir(venv): shutil.rmtree(venv)
+    ready = os.path.exists(py) and subprocess.run([py, "-c", "import pandas, numpy, scipy, shapely, yaml, matplotlib"],
+                                                  capture_output=True).returncode == 0
+    if ready:
+        print("Using the Python environment in .venv/ (set up on an earlier run).\n", flush=True)
+    else:
+        print("--fresh-env: rebuilding .venv/ from scratch." if fresh else
+              "Missing or outdated packages: " + ", ".join(missing()) + ".", flush=True)
+        print("Setting up a private Python environment in .venv/ (first run only, about 1-3 minutes)...", flush=True)
+        if not os.path.exists(py):
+            if subprocess.run([sys.executable, "-m", "venv", venv]).returncode:
+                sys.exit("Could not create .venv/. Install the packages yourself with\n"
+                         f"    {sys.executable} -m pip install -r requirements.txt\nthen run this file again.")
+        r = subprocess.run([py, "-m", "pip", "install", "--disable-pip-version-check", "-q", "-r", os.path.join(here, "requirements.txt")])
+        if r.returncode:
+            sys.exit("Installing requirements.txt into .venv/ failed (see the message above). Check the internet connection and run again.")
+        print("Environment ready. Running the analysis inside .venv/ ...\n", flush=True)
+    args = [a for a in sys.argv[1:] if a != "--fresh-env"]
+    sys.exit(subprocess.run([py, os.path.abspath(__file__)] + args, env=dict(os.environ, DJ26_IN_VENV="1")).returncode)
+
 STEPS = [("00_download.py", "Download public data (Inside Airbnb, City of Vancouver, CMHC, StatCan)"),
          ("01_clean_listings.py", "Clean listings and build the comparable set"),
          ("02_seasonality.py", "Seasonality, World Cup premium and the annual nightly-rate factor"),
