@@ -29,21 +29,16 @@ hbar_end_labels(ax, y, b.values, lambda v: f"${v/1000:,.1f}k")
 ax.set_title("Median 1-2BR condo comparable (citywide, n=706): annual gross revenue", fontsize=10.5, color=INK, loc="left")
 finish(fig, "fig_revenue_bridge.png")
 
-# 2) operating model: median yields
-seg = pd.read_csv(os.path.join(OUT, "segment_summary.csv"), index_col=0)
 val = pd.read_csv(os.path.join(OUT, "validation_summary.csv"), index_col=0)['value']
-rows = [("Nightly all year\n(+3% EHT + 1% SVT)", seg.loc['condo_1-2br', 'yield_str'], seg.loc['house_3br+', 'yield_str']),
-        ("Seasonal hybrid\n(no vacancy taxes)", seg.loc['condo_1-2br', 'yield_hybrid'], seg.loc['house_3br+', 'yield_hybrid'])]
-fig, ax = plt.subplots(figsize=(6.4, 3.2)); x = np.arange(len(rows)); w = 0.34
-c = [r[1] * 100 for r in rows]; h = [r[2] * 100 for r in rows]
-ax.bar(x - w/2 - 0.01, c, w, color=BLUE, label="1-2BR condo"); ax.bar(x + w/2 + 0.01, h, w, color=GREY, label="3BR+ detached house")
-ax.axhline(0, color=INK2, lw=0.8)
-ax.axhline(val['ltr_benchmark_yield'] * 100, color=ORANGE, lw=1.6, ls=(0, (4, 3)))
-ax.text(-0.55, val['ltr_benchmark_yield'] * 100 + 0.2, f"Plain long-term rental, Downtown condo: {val['ltr_benchmark_yield']*100:.1f}%", fontsize=8.5, color=INK2, ha="left", va="bottom")
-for xi, v in zip(x - w/2 - 0.01, c): ax.text(xi, v + (0.15 if v >= 0 else -0.45), f"{v:.1f}%", ha="center", fontsize=10, color=INK)
-for xi, v in zip(x + w/2 + 0.01, h): ax.text(xi, v + (0.15 if v >= 0 else -0.45), f"{v:.1f}%", ha="center", fontsize=10, color=INK)
-ax.set_xticks(x); ax.set_xticklabels([r[0] for r in rows]); ax.set_ylabel("Median 2027 net yield (%)")
-ax.set_ylim(-4.2, 5.4); ax.legend(frameon=False, fontsize=9, loc="lower right")
+# 2) operating model: the recommended 12 Downtown condos, P50 of the same 10,000 simulated 2027s (05_portfolio.py)
+om = pd.read_csv(os.path.join(OUT, "portfolio_operating_models.csv"))
+lab = ["Nightly all year\n(+3% EHT + 1% SVT)", "Seasonal hybrid\n(our plan)", "Long-term rental\n(12-month lease)"]
+v = om.yield_p50.values * 100
+fig, ax = plt.subplots(figsize=(6.4, 3.2)); x = np.arange(len(v))
+ax.bar(x, v, 0.55, color=[GREY, BLUE, GREY]); ax.axhline(0, color=INK2, lw=0.8)
+for xi, vi in zip(x, v): ax.text(xi, vi + (0.15 if vi >= 0 else -0.45), f"{vi:.1f}%", ha="center", fontsize=10, color=INK)
+ax.set_xticks(x); ax.set_xticklabels(lab); ax.set_ylabel("2027 net yield, P50 (%)"); ax.set_ylim(-2.0, 5.2)
+ax.set_title("12 Downtown 1-2BR condos: median of 10,000 simulated 2027s", fontsize=10.5, color=INK, loc="left")
 finish(fig, "fig_operating_model.png", CREDIT + "; StatCan 46-10-0092-01 Q1 2026 asking rents; City of Vancouver 2026 assessments")
 
 # 3) seasonality
@@ -93,7 +88,7 @@ for yi, lo, hi, d in zip(y, T.low * 100, T.high * 100, T.driver):
     ax.barh(yi, lo - base, left=base, color=col, height=0.55); ax.barh(yi, hi - base, left=base, color=LGREY if "FAILED" not in d else LGREY, height=0.55)
     ax.text(min(lo, hi) - 0.12, yi, f"{min(lo,hi):.1f}%", ha="right", va="center", fontsize=8.5)
 ax.axvline(base, color=INK, lw=1); ax.text(base, len(T) - 0.35, f"Base {base:.1f}%", ha="center", fontsize=9)
-ax.set_yticks(y); ax.set_yticklabels(T.driver.str.replace("$", r"\$", regex=False), fontsize=8.5); ax.set_xlabel("Portfolio 2027 net yield (%)"); ax.set_xlim(-2.2, 5.8)
+ax.set_yticks(y); ax.set_yticklabels(T.driver.str.replace("$", r"\$", regex=False), fontsize=8.5); ax.set_xlabel("12-condo portfolio, 2027 net yield, P50 of 10,000 simulations (%)"); ax.set_xlim(-2.2, 5.8)
 finish(fig, "fig_tornado.png")
 
 # 7) opt-out test

@@ -1,6 +1,6 @@
 """Acquisition cost by local area from the City's 2026 property tax report (BC Assessment values,
 valuation date July 1 2025), joined to parcel points -> local-area polygons, rolled forward to mid-2026
-with GVR MLS HPI one-year change. Writes outputs/acquisition_cost_by_area.csv and outputs/value_validation.csv
+with GVR MLS HPI one-year change. Writes outputs/acquisition_cost_by_area.csv, outputs/value_validation.csv and outputs/assessment_join.csv
 """
 import pandas as pd, numpy as np
 from common import *
@@ -15,6 +15,8 @@ P[['lat', 'lon']] = P.geo_point_2d.str.split(',', expand=True).astype(float)
 P['local_area'] = assign_local_area(P.lat.values, P.lon.values)
 T = T.merge(P[['tax_coord', 'local_area']], left_on='land_coordinate', right_on='tax_coord', how='left')
 print("join rate", T.local_area.notna().mean().round(4))
+pd.Series({"folios_2026": len(T), "folios_matched_to_parcel_and_local_area_pct": T.local_area.notna().mean() * 100}).round(2)\
+  .to_csv(os.path.join(OUT, "assessment_join.csv"), header=["value"])
 
 condo = T[(T.legal_type == 'STRATA') & T.zoning_classification.isin(
     ['Comprehensive Development', 'Residential', 'Commercial', 'Historical Area']) & T.value.between(250_000, 5_000_000)]

@@ -36,3 +36,12 @@ def assign_local_area(lat, lon, areas=None):
 def load_assumptions():
     import yaml
     return yaml.safe_load(open(os.path.join(MAN, "assumptions.yaml")))
+
+def ltr_rent_condo(downtown_comps):
+    """Long-term rental benchmark rent (per month) for the Downtown 1-2BR mix: Statistics Canada table 46-10-0092-01,
+    AVERAGE ASKING rent, Vancouver CMA, Q1 2026, 1BR and 2BR weighted by the Downtown comparables' bedroom mix."""
+    lt = load_assumptions()['long_term_rental']
+    q = pd.read_csv(os.path.join(RAW, "statcan", "statcan_46100092_vancouver.csv"))
+    q = q[(q.REF_DATE == lt['rent_source_quarter']) & (q.Estimates == 'Average asking rent')].set_index('Rental unit type').VALUE
+    share_2br = (downtown_comps.bedrooms.fillna(1).clip(1, 2) == 2).mean()
+    return (1 - share_2br) * q['Apartment - 1 bedroom'] + share_2br * q['Apartment - 2 bedrooms'], q

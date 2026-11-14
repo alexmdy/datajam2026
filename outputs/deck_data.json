@@ -46,7 +46,16 @@
   "C_p50": 0.0382,
   "B_spread": 0.0218,
   "C_spread": 0.0205,
-  "fail6_yield": -0.0081,
+  "B_yield_nightly_all_year": -0.0091,
+  "B_yield_hybrid": 0.0411,
+  "B_yield_long_term_rental": 0.0253,
+  "B_yield_hybrid_naive_revenue": 0.0457,
+  "fail6_yield": -0.0091,
+  "vacancy_taxes_per_downtown_condo": 28280.0,
+  "matched_listings_mar_jun": 1965.0,
+  "long_stay_quote_min_price": 6.17,
+  "gvr_one_year_change_range": "-5.6 to -9.6",
+  "assessment_join_pct": 100.0,
   "value_check_range": "-0.020 to +0.045",
   "occ_calendar_spearman": 0.0549,
   "split_half_spearman": 0.75,
@@ -102,15 +111,15 @@
   ]
  ],
  "opmodel": {
-  "condo": [
-   -0.014,
-   0.042,
-   0.0253
+  "labels": [
+   "Nightly all year (+3% EHT + 1% SVT)",
+   "Seasonal hybrid (plan)",
+   "Long-term rental (12-month lease)"
   ],
-  "house": [
-   -0.031,
-   0.02,
-   0.0229
+  "condo": [
+   -0.0091,
+   0.0411,
+   0.0253
   ]
  },
  "season": [
@@ -250,45 +259,45 @@
  "tornado": [
   [
    "Nightly rate (ADR) -10% / +10%",
-   0.038,
-   0.0453,
-   0.0417
+   0.0375,
+   0.0447,
+   0.0411
   ],
   [
    "Occupancy -10% / +10%",
-   0.038,
-   0.0453,
-   0.0417
+   0.0375,
+   0.0447,
+   0.0411
   ],
   [
    "Furnished monthly rent: 70% / 100% of lower-quartile ask",
-   0.0372,
-   0.0462,
-   0.0417
+   0.0365,
+   0.0455,
+   0.0411
   ],
   [
    "Purchase price +5% / -5%",
-   0.0395,
-   0.044,
-   0.0417
+   0.039,
+   0.0434,
+   0.0411
   ],
   [
    "Management 25% / 15%",
-   0.0386,
-   0.0448,
-   0.0417
+   0.038,
+   0.0441,
+   0.0411
   ],
   [
    "Strata fee $650 / $400 per month",
-   0.0393,
-   0.0433,
-   0.0417
+   0.0386,
+   0.0427,
+   0.0411
   ],
   [
    "6-month 30-day test FAILED (STR all year + EHT + SVT)",
-   -0.0081,
-   0.0417,
-   0.0417
+   -0.0091,
+   0.0411,
+   0.0411
   ]
  ],
  "vacancy": [

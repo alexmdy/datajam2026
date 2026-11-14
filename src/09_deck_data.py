@@ -10,8 +10,8 @@ d = {"k": K}
 d["waterfall"] = pd.read_csv(r("cleaning_waterfall.csv")).values.tolist()
 seg = pd.read_csv(r("segment_summary.csv"), index_col=0)
 vs = pd.read_csv(r("validation_summary.csv"), index_col=0)['value']
-d["opmodel"] = {"condo": [seg.loc['condo_1-2br', 'yield_str'], seg.loc['condo_1-2br', 'yield_hybrid'], vs['ltr_benchmark_yield']],
-                "house": [seg.loc['house_3br+', 'yield_str'], seg.loc['house_3br+', 'yield_hybrid'], vs['ltr_benchmark_yield_house']]}
+om = pd.read_csv(r("portfolio_operating_models.csv"))          # 12 Downtown condos, P50 of the same 10,000 simulated years
+d["opmodel"] = {"labels": om.model.tolist(), "condo": om.yield_p50.tolist()}
 d["season"] = pd.read_csv(r("seasonality_monthly.csv"), index_col=0).revenue_share.tolist()
 d["bridge"] = pd.read_csv(r("revenue_bridge.csv"), index_col=0).iloc[:, 0].tolist()
 ar = pd.read_csv(r("area_ranking.csv")).sort_values('yield_hybrid', ascending=False)

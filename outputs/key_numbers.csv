@@ -45,7 +45,16 @@ A_prob_below_2,0.1596,05
 C_p50,0.0382,05
 B_spread,0.0218,05
 C_spread,0.0205,05
-fail6_yield,-0.0081,06 -> sensitivity.csv
+B_yield_nightly_all_year,-0.0091,"05 -> portfolio_operating_models.csv (P50, same 10,000 years)"
+B_yield_hybrid,0.0411,05 -> portfolio_operating_models.csv (= B_p50)
+B_yield_long_term_rental,0.0253,05 -> portfolio_operating_models.csv
+B_yield_hybrid_naive_revenue,0.0457,05 -> validation_furnished_fee.csv (D2 check)
+fail6_yield,-0.0091,"05 -> sensitivity.csv (P50, nightly all year + EHT + SVT)"
+vacancy_taxes_per_downtown_condo,28280.0,08 (Downtown price x (3% EHT + 1% SVT))
+matched_listings_mar_jun,1965.0,02 -> seasonality_params.csv
+long_stay_quote_min_price,6.17,01 -> data_quality.csv
+gvr_one_year_change_range,-5.6 to -9.6,data/manual/gvr_hpi_june2026.csv (apartment + detached)
+assessment_join_pct,100.0,03 -> assessment_join.csv
 value_check_range,-0.020 to +0.045,03 -> value_validation.csv
 occ_calendar_spearman,0.0549,06
 split_half_spearman,0.75,06
@@ -57,7 +66,7 @@ new_westminster_vacancy_2025,5.8,06 (CMHC reliability d)
 surrey_vacancy_2025,4.3,06
 richmond_vacancy_2025,3.1,06
 city_str_licence_fee,1108.0,"06 (Vancouver Open Data, 2026 median fee paid)"
-furnished_on_airbnb_yield_cost,0.0046,06 -> validation_furnished_fee.csv
+furnished_on_airbnb_yield_cost,0.0046,05 -> validation_furnished_fee.csv
 reserve_years_of_vacancy_tax,3.002710985384253,08 (reserve / 12 units x EHT+SVT on the Downtown price)
 licence_share_active,0.8922,06
 downtown_1br_share,0.6,06 -> downtown_by_bedrooms.csv

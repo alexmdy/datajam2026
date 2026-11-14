@@ -20,7 +20,7 @@ PPTX_SKILL=<path to a folder containing scripts/apply_theme.js> node deck/build_
 
 Monte Carlo seeds are fixed, so every number reproduces exactly.
 
-**What you see when it runs:** one progress line per step, then a summary of every pitch number grouped the way the pitch tells the story (recommendation, data and cleaning, area ranking, decisions D1-D4, risks, validation, assumptions). Each group has a heading saying what the numbers mean, the slides that use them and the output file they come from. The summary is also saved to `outputs/report.txt`; each step's full printout is in `outputs/run_log.txt`.
+**What you see when it runs:** one progress line per step, then every number in the pitch deck, **slide by slide** (and chart by chart). Each number is followed by WHAT kind of number it is (count, median, P50 of the simulation, lower quartile, bootstrap CI, assumption...), HOW it was calculated, and FROM which script and output file. The summary is also saved to `outputs/report.txt`; each step's full printout is in `outputs/run_log.txt`.
 
 **Privacy:** the Inside Airbnb files in `data/raw/` are stored *sanitized* (`src/ia_sanitize.py`, applied automatically by `00_download.py`): no host names, listing URLs, host profiles, licence numbers or reviewer names/text are kept. The licence text is replaced by its category (`license_category`: city_licence / exempt / other_text / none), which is all the analysis uses. The original detailed listings file has 90 columns; the stored copy keeps 74.
 
@@ -40,7 +40,7 @@ Monte Carlo seeds are fixed, so every number reproduces exactly.
 | `src/07_charts.py` | Static PNG figures (for the README / backup) | `outputs/figures/` |
 | `src/08_key_numbers.py` | **Every number quoted in the pitch, with the script that produced it** | `outputs/key_numbers.csv` |
 | `src/09_deck_data.py` | Exports what the deck displays | `outputs/deck_data.json` |
-| `src/10_report.py` | Readable summary of every pitch number, with headings explaining each group (reads 01-09 outputs only) | `outputs/report.txt` |
+| `src/10_report.py` | Every pitch number, slide by slide, with what it is, how it was made and where it comes from (reads 01-09 outputs only) | `outputs/report.txt` |
 
 All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR benchmark figures (transcribed from the public June 2026 stats package PDF, whose site blocks scripted download) are in `data/manual/gvr_hpi_june2026.csv`.
 
@@ -51,15 +51,15 @@ All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR
 | 12 condos, $9.0M deployed | `B_units`, `B_capital` | `05_portfolio.py` (`build`) |
 | NOI ≈ $370k ($280k–$480k) | `B_noi_p50`, `B_noi_p10`, `B_noi_p90` | `05_portfolio.py` (`simulate`) |
 | 4.1% yield (3.1%–5.3%) | `B_p50`, `B_p10`, `B_p90` | `05_portfolio.py` |
-| Nightly all year −1.4% vs hybrid 4.2% (condos) | `condo_yield_str`, `condo_yield_hybrid` | `04_economics.py` |
+| 12 Downtown condos: nightly all year −0.9% vs hybrid 4.1% vs long-term rental 2.5% (P50, same 10,000 simulated years) | `B_yield_nightly_all_year`, `B_yield_hybrid`, `B_yield_long_term_rental` | `05_portfolio.py` |
 | Long-term rental 2.5% (condo, $2,614/mo) / 2.3% (house, $4,860/mo) | `ltr_benchmark_yield`, `ltr_benchmark_yield_house`, `ltr_rent_*` | `06_validation.py` |
-| Naive revenue would show 4.6% instead of 4.2% (D2) | `condo_yield_hybrid_naive_revenue` | `04_economics.py` |
+| Naive revenue would show 4.6% instead of 4.1% (D2) | `B_yield_hybrid_naive_revenue` | `05_portfolio.py` |
 | May–Oct = 73% of nightly revenue | `may_oct_revenue_share` | `02_seasonality.py` |
 | World Cup match-night premium 5.8% (95% CI 3.0–9.0%) | `match_night_premium`, `match_premium_ci` | `02_seasonality.py` |
 | Revenue $64.8k → $57.0k → $67.0k | `rev_bridge_*` | `04_economics.py` |
 | Downtown 4.6% (n=475), $707k purchase | `downtown_yield_hybrid`, `downtown_n`, `downtown_price` | `03`, `04` |
 | Houses P50 2.7%, 16% chance < 2% | `A_p50`, `A_prob_below_2` | `05_portfolio.py` |
-| Fail 6-month test → −0.8% | `fail6_yield` | `06_validation.py` (sensitivity) |
+| Fail 6-month test → −0.9%; sensitivity tornado (base 4.1%) | `fail6_yield`, `sensitivity.csv` | `05_portfolio.py` (same simulation) |
 | City vacancy 0.8% (2023), 1.5% (2024), 2.7% (2025); Burnaby 5.9%, New Westminster 5.8%, Surrey 4.3%, Richmond 3.1% (2025) | `city_vacancy_*`, `*_vacancy_2025` | `06_validation.py` (CMHC published city rates) |
 | City STR licence $1,108 (2026 median fee paid) | `city_str_licence_fee` | `06_validation.py` (checks `assumptions.yaml`) |
 | Furnished months listed on Airbnb: −0.5 pt | `furnished_on_airbnb_yield_cost` | `06_validation.py` |

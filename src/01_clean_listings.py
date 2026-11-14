@@ -7,6 +7,9 @@ from common import *
 
 L = pd.read_csv(ia_path(SNAP, "listings.csv.gz"))
 print("raw shape", L.shape)
+from ia_sanitize import DROP
+RAW_COLS = L.shape[1]                                              # columns in the stored (sanitized) file
+DOWNLOAD_COLS = RAW_COLS + sum(c not in L.columns for c in DROP)   # + identifying columns the sanitizer removed
 # Never carry identifying fields forward (rules: no host names, URLs, licence numbers)
 L = L.drop(columns=[c for c in L.columns if c in ("listing_url","host_url","host_name","host_profile_url",
           "host_thumbnail_url","host_picture_url","picture_url","host_about","name","description",
@@ -33,10 +36,11 @@ L["local_area"] = assign_local_area(L.latitude.values, L.longitude.values)
 
 # ---- data-quality checks ----
 dq = {
-  "rows": len(L), "unique_ids": L.id.nunique(),
+  "rows": len(L), "unique_ids": L.id.nunique(), "columns_in_download": DOWNLOAD_COLS, "columns_kept_after_sanitizing": RAW_COLS,
   "scrape_dates": ", ".join(f"{d.date()}:{n}" for d, n in L.last_scraped.value_counts().sort_index().items()),
   "price_missing_pct": round(L.price_num.isna().mean()*100, 1),
   "price_from_90night_quote_pct": round((L.quote_nights >= 28).mean()*100, 1),
+  "long_stay_quote_min_price": float(L[L.quote_nights >= 28].price_num.min()),
   "price_lt_30_count": int((L.price_num < 30).sum()), "price_gt_3000_count": int((L.price_num > 3000).sum()),
   "bedrooms_missing_pct": round(L.bedrooms.isna().mean()*100, 1),
   "reviews_ltm_zero_pct": round((L.number_of_reviews_ltm == 0).mean()*100, 1),

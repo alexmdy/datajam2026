@@ -1,4 +1,4 @@
-"""Validation, robustness and context checks. Writes outputs/validation_*.csv and outputs/sensitivity.csv"""
+"""Validation, robustness and context checks. Writes outputs/validation_*.csv (sensitivity is in 05_portfolio.py)"""
 import pandas as pd, numpy as np
 from scipy.stats import spearmanr
 from common import *
@@ -56,10 +56,7 @@ out['downtown_condo_median_rev_str'] = base.rev_str.median()
 #    (table 46-10-0092-01, average ASKING rent, Vancouver CMA, Q1 2026 = latest published before the case date).
 #    Asking rent is what a new lease would get today. CMA-wide rents are a conservative proxy for City of Vancouver.
 lt = A['long_term_rental']
-qrs = pd.read_csv(os.path.join(RAW, "statcan", "statcan_46100092_vancouver.csv"))
-qrs = qrs[(qrs.REF_DATE == lt['rent_source_quarter']) & (qrs.Estimates == 'Average asking rent')].set_index('Rental unit type').VALUE
-share_2br = (base.bedrooms.fillna(1).clip(1, 2) == 2).mean()      # bedroom mix of the Downtown 1-2BR comparables
-rent_condo = (1 - share_2br) * qrs['Apartment - 1 bedroom'] + share_2br * qrs['Apartment - 2 bedrooms']
+rent_condo, qrs = ltr_rent_condo(base)                            # Downtown 1BR/2BR mix (common.py)
 rent_house = qrs['House - 3 or more bedrooms']
 def ltr_yield(rent, price, capital_unfurnished, strata, insurance):
     noi = 12 * rent * (1 - lt['management_pct'] - op['maintenance_pct']) - strata - insurance - price * op['property_tax_rate']
@@ -109,33 +106,8 @@ assert abs(lic_fee - op['city_str_licence_year']) < 1, "assumptions.yaml licence
 pd.Series(out).round(4).to_csv(os.path.join(OUT, "validation_summary.csv"), header=['value'])
 print(pd.Series(out).round(4).to_string())
 
-# 6) One-at-a-time sensitivity, recommended portfolio (12 Downtown 1-2BR condos), expected (mean) NOI yield
-D = base.copy(); n_units = 12
-str_fees = op['platform_fee_pct'] + op['management_pct_str'] + op['maintenance_pct']
-def port_yield(adr=1, occ=1, mtr=0.85, price=1, mgmt=op['management_pct_str'], strata=op['strata_fee_condo_month'], fail6=False):
-    pr = D.price * price; capu = D.capital * price
-    str_rev = D.rev_str * adr * occ * 0.925 * (1 if fail6 else S.peak_may_oct_revenue_share)   # 0.925 = mean ramp-up factor, as in 05
-    mtr_rev = 0 if fail6 else rv['mtr_months'] * D.mtr_rent * mtr
-    fees = op['platform_fee_pct'] + mgmt + op['maintenance_pct']
-    fixed = op['utilities_internet_condo_month'] * 12 + strata * 12 + op['insurance_condo_year'] + pr * op['property_tax_rate'] + op['city_str_licence_year'] + op['provincial_registration_year']
-    vac = pr * (vt['empty_homes_tax_pct'] + vt['svt_pct']) if fail6 else 0
-    noi = str_rev * (1 - fees) + mtr_rev * (1 - op['management_pct_mtr'] - op['maintenance_pct']) - fixed - vac
-    return noi.mean() * n_units / (capu.mean() * n_units)
-b = port_yield()
-cases = [("Nightly rate (ADR) -10% / +10%", port_yield(adr=.9), port_yield(adr=1.1)),
-         ("Occupancy -10% / +10%", port_yield(occ=.9), port_yield(occ=1.1)),
-         ("Furnished monthly rent: 70% / 100% of lower-quartile ask", port_yield(mtr=.7), port_yield(mtr=1.0)),
-         ("Purchase price +5% / -5%", port_yield(price=1.05), port_yield(price=.95)),
-         ("Management 25% / 15%", port_yield(mgmt=.25), port_yield(mgmt=.15)),
-         ("Strata fee $650 / $400 per month", port_yield(strata=650), port_yield(strata=400)),
-         ("6-month 30-day test FAILED (STR all year + EHT + SVT)", port_yield(fail6=True), b)]
-T = pd.DataFrame(cases, columns=['driver', 'low', 'high']); T['base'] = b
-T.round(4).to_csv(os.path.join(OUT, "sensitivity.csv"), index=False); print(T.round(4).to_string(index=False))
-
-# 6b) Furnished months listed on Airbnb instead of leased directly: the 15.5% platform fee also hits that rent
-mtr_fee_cost = (rv['mtr_months'] * D.mtr_rent * 0.85 * op['platform_fee_pct']).mean() / D.capital.mean()
-pd.Series({"furnished_on_airbnb_yield_cost": mtr_fee_cost}).round(4).to_csv(os.path.join(OUT, "validation_furnished_fee.csv"), header=["value"])
-print(f"furnished months on Airbnb: -{mtr_fee_cost*100:.2f} pts")
+# 6) Sensitivity, fail case and furnished-fee cost now come from the portfolio simulation (05_portfolio.py),
+#    so they share the headline P50 as their base.
 
 # 7) Downtown comparables by bedrooms (mix guidance)
 bd = base.groupby(base.bedrooms.fillna(1).clip(0, 2)).agg(n=('id', 'size'), rev_str=('rev_str', 'median'), adr=('adr_2027', 'median'), nights=('nights', 'median'))

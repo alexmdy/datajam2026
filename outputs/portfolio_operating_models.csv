@@ -1,0 +1,4 @@
+model,yield_p10,yield_p50,yield_p90,noi_p50,ltr_rent_month
+Nightly all year (+3% EHT + 1% SVT),-0.0211,-0.0091,0.0059,-82031.1663,2614.0
+Seasonal hybrid (plan),0.0312,0.0411,0.053,368515.9658,2614.0
+Long-term rental (12-month lease),0.0242,0.0253,0.0265,219741.57,2614.0
