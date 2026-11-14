@@ -10,13 +10,13 @@ Data: Inside Airbnb, Vancouver, 15 June 2026, CC BY 4.0.
 
 ```bash
 pip install -r requirements.txt
-python run_all.py --download   # first run: downloads every public dataset, then runs 01–09
+python run_all.py --download   # first run: downloads every public dataset, then runs 01–10
 python run_all.py              # later runs: recompute everything from data/raw
 python run_all.py --verbose    # same, but also show each step's full printout on screen
 PPTX_SKILL=<path to a folder containing scripts/apply_theme.js> node deck/build_deck.js   # draft deck from outputs/deck_data.json (needs the pptxgenjs npm package)
 ```
 
-`deck/DDD_DataJam2026_Pitch.pptx` is the submitted pitch. It started from `build_deck.js` and was then edited by hand (slides reordered: Where/what is slide 3, the operating model slide 4), so slide numbers in a fresh build differ; every number on it is in `outputs/key_numbers.csv`.
+`deck/DDD_DataJam2026_Pitch.pptx` is the submitted pitch. It started from `build_deck.js` and was then edited by hand (slides reordered: Where/what is slide 3, the operating model slide 4), so a fresh build differs in layout and wording; every number on the submitted deck is printed slide by slide by `run_all.py` (`outputs/report.txt`) and listed in `outputs/key_numbers.csv`.
 
 Monte Carlo seeds are fixed, so every number reproduces exactly.
 
@@ -35,24 +35,24 @@ Monte Carlo seeds are fixed, so every number reproduces exactly.
 | `src/02_seasonality.py` | Review-based demand seasonality; same-listing March vs June price ratio; FIFA World Cup match-night premium; annual ADR factor | `outputs/seasonality_params.csv`, `outputs/seasonality_monthly.csv` |
 | `src/03_property_values.py` | 2026 assessments → parcels → local areas; median condo (strata) and detached (R1-1) values; GVR roll-forward; check vs GVR benchmarks | `outputs/acquisition_cost_by_area.csv`, `outputs/value_validation.csv` |
 | `src/04_economics.py` | Per-comparable 2027 revenue, costs, taxes and yield under nightly-only vs seasonal hybrid; area ranking with bootstrap CIs | `outputs/area_ranking.csv`, `outputs/segment_summary.csv`, `outputs/revenue_bridge.csv` |
-| `src/05_portfolio.py` | Monte Carlo (10,000 runs) of four portfolios: few high-value vs many modest | `outputs/portfolio_options.csv` |
-| `src/06_validation.py` | Occupancy vs calendar, split-half stability, World Cup check for Downtown, long-term-rental benchmark, compliance estimate, CMHC opt-out test, sensitivity | `outputs/validation_summary.csv`, `outputs/sensitivity.csv` |
+| `src/05_portfolio.py` | Monte Carlo (10,000 runs) of four portfolios: few high-value vs many modest; on the same simulated years for the recommended 12 condos: the three operating models, the sensitivity tornado, the D2 naive-revenue check and the furnished-on-Airbnb cost | `outputs/portfolio_options.csv`, `outputs/portfolio_operating_models.csv`, `outputs/sensitivity.csv` |
+| `src/06_validation.py` | Occupancy vs calendar, split-half stability, World Cup check for Downtown, long-term-rental benchmark, compliance estimate, CMHC opt-out test | `outputs/validation_summary.csv` |
 | `src/07_charts.py` | Static PNG figures (for the README / backup) | `outputs/figures/` |
 | `src/08_key_numbers.py` | **Every number quoted in the pitch, with the script that produced it** | `outputs/key_numbers.csv` |
 | `src/09_deck_data.py` | Exports what the deck displays | `outputs/deck_data.json` |
 | `src/10_report.py` | Every pitch number, slide by slide, with what it is, how it was made and where it comes from (reads 01-09 outputs only) | `outputs/report.txt` |
 
-All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR benchmark figures (transcribed from the public June 2026 stats package PDF, whose site blocks scripted download) are in `data/manual/gvr_hpi_june2026.csv`.
+All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR benchmark figures (transcribed by hand from the public June 2026 stats package PDF) are in `data/manual/gvr_hpi_june2026.csv`.
 
 ## Tracing a number from the pitch
 
 | Pitch claim | Key in `outputs/key_numbers.csv` | Produced in |
 |---|---|---|
 | 12 condos, $9.0M deployed | `B_units`, `B_capital` | `05_portfolio.py` (`build`) |
-| NOI ≈ $370k ($280k–$480k) | `B_noi_p50`, `B_noi_p10`, `B_noi_p90` | `05_portfolio.py` (`simulate`) |
+| NOI ≈ $370k ($280k–$470k) | `B_noi_p50`, `B_noi_p10`, `B_noi_p90` | `05_portfolio.py` (`draw`, `evaluate`) |
 | 4.1% yield (3.1%–5.3%) | `B_p50`, `B_p10`, `B_p90` | `05_portfolio.py` |
 | 12 Downtown condos: nightly all year −0.9% vs hybrid 4.1% vs long-term rental 2.5% (P50, same 10,000 simulated years) | `B_yield_nightly_all_year`, `B_yield_hybrid`, `B_yield_long_term_rental` | `05_portfolio.py` |
-| Long-term rental 2.5% (condo, $2,614/mo) / 2.3% (house, $4,860/mo) | `ltr_benchmark_yield`, `ltr_benchmark_yield_house`, `ltr_rent_*` | `06_validation.py` |
+| Long-term rent $2,614/mo (condo, Downtown 1BR/2BR mix), $4,860/mo (house) | `ltr_rent_*` | `06_validation.py`, `common.py` |
 | Naive revenue would show 4.6% instead of 4.1% (D2) | `B_yield_hybrid_naive_revenue` | `05_portfolio.py` |
 | May–Oct = 73% of nightly revenue | `may_oct_revenue_share` | `02_seasonality.py` |
 | World Cup match-night premium 5.8% (95% CI 3.0–9.0%) | `match_night_premium`, `match_premium_ci` | `02_seasonality.py` |
@@ -62,14 +62,16 @@ All cost and tax assumptions live in `data/manual/assumptions.yaml`. The six GVR
 | Fail 6-month test → −0.9%; sensitivity tornado (base 4.1%) | `fail6_yield`, `sensitivity.csv` | `05_portfolio.py` (same simulation) |
 | City vacancy 0.8% (2023), 1.5% (2024), 2.7% (2025); Burnaby 5.9%, New Westminster 5.8%, Surrey 4.3%, Richmond 3.1% (2025) | `city_vacancy_*`, `*_vacancy_2025` | `06_validation.py` (CMHC published city rates) |
 | City STR licence $1,108 (2026 median fee paid) | `city_str_licence_fee` | `06_validation.py` (checks `assumptions.yaml`) |
-| Furnished months listed on Airbnb: −0.5 pt | `furnished_on_airbnb_yield_cost` | `06_validation.py` |
+| Furnished months listed on Airbnb: −0.5 pt | `furnished_on_airbnb_yield_cost` | `05_portfolio.py` |
 | Price proxy within −2.0% to +4.5% of GVR | `value_check_range` | `03_property_values.py` |
 
 ## Data sources (all public, free, no login)
 
+No data in this project was scraped: every file is a published download (Inside Airbnb, City of Vancouver Open Data exports, CMHC HMIP CSV export, Statistics Canada table download) or, for six GVR figures, transcribed by hand from a public PDF. Attributions: Inside Airbnb data under CC BY 4.0 (stored copies are modified: identifying columns removed); contains information licensed under the Open Government Licence – Vancouver; Source: Statistics Canada, table 46-10-0092-01 (Statistics Canada Open Licence); Source: CMHC, Rental Market Survey; Greater Vancouver REALTORS MLS HPI.
+
 - Inside Airbnb, Vancouver detailed listings, calendar, reviews, 15 June 2026; listings, 21 March 2026 and 14 December 2025 (the December file has no prices). CC BY 4.0. The 17 September 2026 snapshot was deliberately **not** used (after the case date), nor was the 18-column summary `listings.csv`.
 - City of Vancouver Open Data: property tax report (2026), property parcel polygons, local area boundaries, business licences (short-term rental operators; only status, year, local area and fee fields).
-- CMHC Rental Market Survey, HMIP table 2.1.31.2, published city (census subdivision) vacancy rates for Vancouver, Burnaby, New Westminster, Surrey and Richmond, October 2023–2025 (used for the opt-out test); and table 2.1.31.3, Vancouver CMA by zone (cross-check).
+- CMHC Rental Market Survey, Housing Market Information Portal (public, no login; downloaded with the portal's own CSV export, used under the CMHC Licence Agreement for the Use of Data), HMIP table 2.1.31.2, published city (census subdivision) vacancy rates for Vancouver, Burnaby, New Westminster, Surrey and Richmond, October 2023–2025 (used for the opt-out test); and table 2.1.31.3, Vancouver CMA by zone (cross-check).
 - Statistics Canada, Quarterly Rent Statistics, table 46-10-0092-01 (average asking rent by unit type and bedrooms, Vancouver CMA, experimental estimates with CMHC). Q1 2026, released 9 June 2026, is used for the long-term-rental benchmark; later quarters in the file are ignored.
 - Greater Vancouver REALTORS, MLS HPI, June 2026 stats package.
 - Rules and rates: City of Vancouver Vacancy Tax By-law 11674 (3%); BC Speculation and Vacancy Tax (1% Canadian owners from 2026); BC Property Transfer Tax; BC STR registry fees; City of Vancouver 2026 residential tax rate; BC Government news release, 17 April 2026 (opt-out rules).

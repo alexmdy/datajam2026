@@ -2,7 +2,7 @@
 All sources are public, free, no login. Inside Airbnb data: CC BY 4.0.
 Usage: python src/00_download.py
 """
-import io, os, urllib.request
+import io, os, csv, urllib.request, urllib.parse
 import pandas as pd
 from ia_sanitize import sanitize   # strips host names, URLs, licence numbers, reviewer data
 
@@ -41,35 +41,50 @@ get(VOD + "/business-licences/exports/csv?delimiter=,&where=businesstype=%22Shor
     "&select=folderyear,status,businesstype,businesssubtype,localarea,issueddate,expireddate,feepaid",
     os.path.join(RAW, "vancouver_opendata", "str_business_licences_2024_2026.csv"))
 
-# 3) CMHC Rental Market Survey, Vancouver CMA by zone (HMIP table 2.1.31.3), October 2023-2025
-HMIP = ("https://www03.cmhc-schl.gc.ca/hmip-pimh/en/TableMapChart/Table?TableId=2.1.31.3&GeographyId=2410"
-        "&GeographyTypeId=3&BreakdownGeographyTypeId=5&DisplayAs=Table&GeograghyName=Vancouver&Ytd=False"
-        "&DefaultDataField=vacancy_rate_pct&Survey=Rms&ForTimePeriod.Year={y}&ForTimePeriod.Month=10")
+# 3) CMHC Rental Market Survey via the Housing Market Information Portal (HMIP): public, free, no login.
+#    We use the portal's own "Export -> CSV" function (the same request as the Export button on each table page),
+#    not the web page itself. CMHC Licence Agreement for the Use of Data: reproduced accurately, source acknowledged.
+HMIP_EXPORT = "https://www03.cmhc-schl.gc.ca/hmip-pimh/en/TableMapChart/ExportTable"
+def hmip_table(params):
+    """Download one HMIP table as CSV and return its data rows (zone/city, then 12 value/reliability columns)."""
+    body = dict(DisplayAs="Table", Ytd="False", DefaultDataField="vacancy_rate_pct", Survey="Rms", exportType="csv")
+    body.update(params)
+    req = urllib.request.Request(HMIP_EXPORT, data=urllib.parse.urlencode(body).encode())
+    with urllib.request.urlopen(req, timeout=120) as r:
+        rows = list(csv.reader(r.read().decode("latin-1").splitlines()))
+    start = next(i for i, x in enumerate(rows) if len(x) > 1 and x[0] == "" and x[1].startswith("Vacancy Rate")) + 1
+    out = []
+    for x in rows[start:]:
+        if not x or not x[0].strip(): break
+        out.append([c.strip().replace(",", "") for c in x[:12]])   # "1,914" -> "1914"; "c " -> "c"
+    return out
+
+# 3a) Table 2.1.31.3: Vancouver CMA by zone, October 2023-2025 (cross-check)
 cols = ['zone','vacancy_rate_pct','vac_rel','availability_rate_pct','avail_rel','avg_rent','rent_rel',
         'median_rent','med_rel','pct_change_rent','chg_rel','units']
 for y in [2023, 2024, 2025]:
     dest = os.path.join(RAW, "cmhc", f"cmhc_rms_vancouver_cma_by_zone_oct{y}.csv")
     if os.path.exists(dest): print("exists", dest); continue
-    with urllib.request.urlopen(HMIP.format(y=y), timeout=120) as r:
-        t = pd.read_html(io.StringIO(r.read().decode("utf8")))[0]
-    t.columns = cols; t["survey"] = f"October {y}"; t.to_csv(dest, index=False); print("saved", dest)
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    t = pd.DataFrame(hmip_table({"TableId": "2.1.31.3", "GeographyId": "2410", "GeographyTypeId": "3",
+                                 "BreakdownGeographyTypeId": "5", "GeograghyName": "Vancouver",
+                                 "ForTimePeriod.Year": str(y), "ForTimePeriod.Month": "10"}), columns=cols)
+    t["survey"] = f"October {y}"; t.to_csv(dest, index=False); print("saved", dest)
 
-# 3b) CMHC Rental Market Survey, CITY-level (census subdivision) vacancy rates, HMIP table 2.1.31.2, October 2023-2025.
+# 3b) Table 2.1.31.2: CITY-level (census subdivision, CY) published vacancy rates, October 2023-2025.
 #     The opt-out test is about a municipality's published rate, so these official city figures are used for it.
 CSD = {"Vancouver": 5915022, "Burnaby": 5915025, "New Westminster": 5915029, "Surrey": 5915004, "Richmond": 5915015}
-HMIP_CSD = ("https://www03.cmhc-schl.gc.ca/hmip-pimh/en/TableMapChart/Table?TableId=2.1.31.2&GeographyId={g}"
-            "&GeographyTypeId=4&DisplayAs=Table&Ytd=False&DefaultDataField=vacancy_rate_pct&Survey=Rms"
-            "&ForTimePeriod.Year={y}&ForTimePeriod.Month=10&BreakdownGeographyTypeId=0")
 dest = os.path.join(RAW, "cmhc", "cmhc_rms_city_vacancy_oct2023_2025.csv")
 if os.path.exists(dest): print("exists", dest)
 else:
     rows = []
     for city, g in CSD.items():
         for y in [2023, 2024, 2025]:
-            with urllib.request.urlopen(HMIP_CSD.format(g=g, y=y), timeout=120) as r:
-                t = pd.read_html(io.StringIO(r.read().decode("utf8")))[0]
-            rows.append({"city": city, "csd_name": t.iloc[0, 0], "year": y, "vacancy_rate_pct": t.iloc[0, 1],
-                         "reliability": t.iloc[0, 2], "units": t.iloc[0, -1]})
+            x = hmip_table({"TableId": "2.1.31.2", "GeographyId": str(g), "GeographyTypeId": "4",
+                            "BreakdownGeographyTypeId": "0", "GeograghyName": city,
+                            "ForTimePeriod.Year": str(y), "ForTimePeriod.Month": "10"})[0]
+            rows.append({"city": city, "csd_name": f"{x[0]} (CY)", "year": y, "vacancy_rate_pct": x[1],
+                         "reliability": x[2], "units": x[11]})
     pd.DataFrame(rows).to_csv(dest, index=False); print("saved", dest)
 # CMHC reliability codes: a = excellent, b = very good, c = good, d = poor (use with caution).
 
@@ -88,5 +103,5 @@ else:
     t = pd.read_csv(z.open("46100092.csv"), low_memory=False)
     t[t.GEO.str.startswith("Vancouver")].to_csv(dest, index=False); print("saved", dest)
 
-# 4) Greater Vancouver REALTORS MLS HPI, June 2026 stats package (public PDF). The site blocks automated
-#    download, so the six benchmark figures used are transcribed in data/manual/gvr_hpi_june2026.csv with the URL.
+# 4) Greater Vancouver REALTORS MLS HPI, June 2026 stats package (public PDF, free, no login). Only six published
+#    benchmark figures are needed, so they were transcribed by hand into data/manual/gvr_hpi_june2026.csv with the URL.

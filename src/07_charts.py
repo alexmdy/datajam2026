@@ -4,7 +4,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from common import *
 
-FIG = os.path.join(OUT, "figures")
+FIG = os.path.join(OUT, "figures"); os.makedirs(FIG, exist_ok=True)
 BLUE, ORANGE, GREY, LGREY, INK, INK2, RED = "#2a78d6", "#eb6834", "#a3a29c", "#d9d8d3", "#0b0b0b", "#52514e", "#e34948"
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11, "axes.edgecolor": LGREY, "axes.labelcolor": INK2,
                      "xtick.color": INK2, "ytick.color": INK2, "axes.spines.top": False, "axes.spines.right": False,
